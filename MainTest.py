@@ -29,6 +29,21 @@ def on_mouse_release(x, y, b, m):
                 game.startGame(posX, posY)
 
 @game.event
+def on_mouse_scroll(x, y, dx, dy):
+    xZoomTo = int((x / game.width) * len(game.tiles[0]))
+    yZoomTo = int((y / game.height) * len(game.tiles))
+    for idy, row in enumerate(game.tiles):
+        for idx, tile in enumerate(row):
+            pdy = idy - yZoomTo
+            pdx = idx - xZoomTo
+            oldWidth = tile.width
+            oldHeight = tile.height
+
+            tile.scale = tile.scale + (dy)
+            tile.x -= pdx * (oldWidth - tile.width)
+            tile.y -= pdy * (oldHeight - tile.height)
+            
+@game.event
 def on_mouse_press(x, y, b, m):
     game.btnSettings.clickEvent(x, y, 0)
     game.btnNewGame.clickEvent(x, y, 0)
