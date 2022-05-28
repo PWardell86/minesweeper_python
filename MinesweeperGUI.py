@@ -1,7 +1,9 @@
 from pyglet import *
 from random import random
-from GameObjects import *
-
+from SettingsWindow import SettingsWindow
+from GameButton import GameButton
+from Tile import Tile
+from Counter import Counter
 
 def button_size(h):
     return h / 1.5
@@ -32,7 +34,7 @@ class Minesweeper(window.Window):
 
         # Initialize the top bar, and counters for timer and flags
         self.sprtTopBar = sprite.Sprite(resource.image(
-            f"Themes/{theme}/TopBar.png"), batch=self.batch)
+            f"Themes/{theme}/TopBar.png"), batch=self.batch, group=graphics.OrderedGroup(1))
         self.barHeight = self.sprtTopBar.height
         self.sprtTopBar.y = self.height - self.barHeight
         self.sprtTopBar.scale_x = self.width / self.sprtTopBar.width
@@ -52,12 +54,12 @@ class Minesweeper(window.Window):
         bYLoc = (self.height - (self.barHeight) / 2) - bSize / 2
         def btnCommand(): return SettingsWindow(self.save)
 
-        self.btnSettings = Button(self.width / 2 - (bSize + 4), bYLoc,
+        self.btnSettings = GameButton(self.width / 2 - (bSize + 4), bYLoc,
                                   rImage, pImage, bSize, bSize, btnCommand, self.batch)
 
         pImage = resource.image(f"{tp}/newGame0.png")
         rImage = resource.image(f"{tp}/newGame1.png")
-        self.btnNewGame = Button((self.width / 2), bYLoc,
+        self.btnNewGame = GameButton((self.width / 2), bYLoc,
                                  rImage, pImage, bSize, bSize, self.reset, self.batch)
 
         self.cntTimer = Counter(
@@ -222,7 +224,7 @@ class Minesweeper(window.Window):
         ]
 
         self.sprtTopBar = sprite.Sprite(resource.image(
-            f"Themes/{self.theme}/TopBar.png"), batch=self.batch)
+            f"Themes/{self.theme}/TopBar.png"), batch=self.batch, group=graphics.OrderedGroup(1))
         self.sprtTopBar.y = self.height - self.barHeight
         self.sprtTopBar.scale_x = self.width / self.sprtTopBar.width
 
@@ -233,7 +235,7 @@ class Minesweeper(window.Window):
         bYLoc = (self.height - (self.barHeight) / 2) - bSize / 2
         def btnCommand(): return SettingsWindow(self.save)
 
-        self.btnSettings = Button(self.width / 2 - (bSize + 4), bYLoc,
+        self.btnSettings = GameButton(self.width / 2 - (bSize + 4), bYLoc,
                                   rImage, pImage, bSize, bSize, btnCommand, self.batch)
 
         pImage = resource.image(f"Themes/{self.theme}/newGame0.png")
@@ -249,7 +251,7 @@ class Minesweeper(window.Window):
                                self.batch, None)
                 row += [newTile]
             self.tiles += [row]
-        self.btnNewGame = Button((self.width / 2), bYLoc,
+        self.btnNewGame = GameButton((self.width / 2), bYLoc,
                                  rImage, pImage, bSize, bSize, self.reset, self.batch)
 
     def clickTile(self, x, y):

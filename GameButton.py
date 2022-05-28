@@ -1,7 +1,7 @@
-from pyglet import sprite
+from pyglet import sprite, graphics
 class GameButton(sprite.Sprite):
     def __init__(self, x, y, restImage, pressedImage, width, height, command, batch):
-        super(GameButton, self).__init__(restImage, x, y, batch=batch)
+        super(GameButton, self).__init__(restImage, x, y, batch=batch, group=graphics.OrderedGroup(2))
         self.batch = batch
         self.scale_x = width / self.width
         self.scale_y = height / self.height

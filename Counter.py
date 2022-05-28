@@ -5,7 +5,7 @@ class Counter(text.Label):
             str(initial),
             font_name=font, font_size=fontSize, color=color,
             anchor_x="center", anchor_y="center", x=x, y=y,
-            batch=batch, group=graphics.OrderedGroup(1))  # Move it to the top so it can be seen
+            batch=batch, group=graphics.OrderedGroup(2))  # Move it to the top so it can be seen
         self.locked = False
         self.count = initial
 
