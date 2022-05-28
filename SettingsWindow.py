@@ -1,67 +1,5 @@
-from pyglet import sprite, text, graphics
-from tkinter import *
-from tkinter import ttk
-import os
-
-
-class Counter(text.Label):
-    def __init__(self, x, y, batch, initial=0, font="Joystix Monospace", fontSize=20, color=(0, 200, 0, 255)):
-        super(Counter, self).__init__(
-            str(initial),
-            font_name=font, font_size=fontSize, color=color,
-            anchor_x="center", anchor_y="center", x=x, y=y,
-            batch=batch, group=graphics.OrderedGroup(1))  # Move it to the top so it can be seen
-        self.locked = False
-        self.count = initial
-
-    def plus(self):
-        if self.locked: return
-        self.count += 1
-        self.text = str(self.count)
-
-    def minus(self):
-        if self.locked: return
-        self.count -= 1
-        self.text = str(self.count)
-
-    def setCounter(self, count):
-        if self.locked: return
-        self.count = count
-        self.text = str(count)
-
-
-class Tile(sprite.Sprite):
-    def __init__(self, x, y, size, defaultImage, batch, value=None, isRevealed=False, isFlagged=False):
-        self.isRevealed = isRevealed
-        self.isFlagged = isFlagged
-        self.value = value
-        # defaultImage.anchor_x = defaultImage.width / 2
-        # defaultImage.anchor_y = defaultImage.height / 2
-        super(Tile, self).__init__(defaultImage, x, y, batch=batch)
-        
-        # Scale the tile properly
-        self.scale = size / self.width
-
-
-class Button(sprite.Sprite):
-    def __init__(self, x, y, restImage, pressedImage, width, height, command, batch):
-        super(Button, self).__init__(restImage, x, y, batch=batch)
-        self.batch = batch
-        self.scale_x = width / self.width
-        self.scale_y = height / self.height
-        self.restImage = restImage
-        self.pressedImage = pressedImage
-        self.command = command
-
-    def clickEvent(self, cx, cy, released):
-        if (cx > self.x and cx < (self.x + self.width) and
-                cy > self.y and cy < (self.y + self.height)):
-            if released == 0:
-                self.image = self.pressedImage
-            if released == 1:
-                self.image = self.restImage
-                self.command()
-
+from tkinter import (DoubleVar, StringVar, ttk, Tk, mainloop)
+from os import listdir
 
 class SettingsWindow(Tk):
     def __init__(self, saveCommand, theme="Star Wars 2", width=250, height=300, name="Settings"):
@@ -74,7 +12,7 @@ class SettingsWindow(Tk):
         self.sclDiff = DoubleVar()
 
         path = "../2.0/Themes"
-        themes = os.listdir(path)
+        themes = listdir(path)
         self.frmButtons = ttk.Frame(self)
         self.frmButtons.grid(column=0, row=1)
 
