@@ -1,4 +1,6 @@
 from pyglet import text, graphics
+
+
 class Counter(text.Label):
     def __init__(self, x, y, batch, initial=0, font="Joystix Monospace", fontSize=20, color=(0, 200, 0, 255)):
         super(Counter, self).__init__(
@@ -10,16 +12,19 @@ class Counter(text.Label):
         self.count = initial
 
     def plus(self):
-        if self.locked: return
+        if self.locked:
+            return
         self.count += 1
         self.text = str(self.count)
 
     def minus(self):
-        if self.locked: return
+        if self.locked:
+            return
         self.count -= 1
         self.text = str(self.count)
 
     def setCounter(self, count):
-        if self.locked: return
+        if self.locked:
+            return
         self.count = count
         self.text = str(count)

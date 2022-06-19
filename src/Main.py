@@ -1,8 +1,10 @@
-from tokenize import Ignore
 from MinesweeperGUI import Minesweeper
 from pyglet import *
 game = Minesweeper(gameSize=(20, 15))
 
+global offset, initial_scale
+initial_scale = game.tiles[0][0].scale
+offset = [0, 0]
 # Remove aliasing
 gl.glTexParameteri(gl.GL_TEXTURE_2D, gl.GL_TEXTURE_MAG_FILTER, gl.GL_NEAREST)
 gl.glTexParameteri(gl.GL_TEXTURE_2D, gl.GL_TEXTURE_MIN_FILTER, gl.GL_NEAREST)
@@ -11,8 +13,9 @@ gl.glTexParameteri(gl.GL_TEXTURE_2D, gl.GL_TEXTURE_MIN_FILTER, gl.GL_NEAREST)
 @game.event
 def on_mouse_release(x, y, b, m):
     # Get mouse coordinates on the board
-    posX = int((x - game.emptySpace[0]) / game.tileSize)
-    posY = int((y - game.emptySpace[1]) / game.tileSize)
+    real_tile_size = game.tileSize / (game.tiles[0][0].scale / initial_scale)
+    posX = int((x - game.emptySpace[0]) / real_tile_size)
+    posY = int((y - game.emptySpace[1]) / real_tile_size)
 
     # Check if the mouse is in the top bar
     game.btnSettings.clickEvent(x, y, 1)
@@ -28,12 +31,14 @@ def on_mouse_release(x, y, b, m):
             else:
                 game.startGame(posX, posY)
 
+
 @game.event
 def on_mouse_scroll(x, y, dx, dy):
     MAX_ZOOM = 5
     MIN_ZOOM = 1
     xZoomTo = int((x / game.width) * len(game.tiles[0]))
     yZoomTo = int((y / game.height) * len(game.tiles))
+
     for idy, row in enumerate(game.tiles):
         for idx, tile in enumerate(row):
             pdy = idy - yZoomTo
@@ -41,11 +46,12 @@ def on_mouse_scroll(x, y, dx, dy):
             oldWidth = tile.width
             oldHeight = tile.height
 
-            tile.scale = min(MAX_ZOOM, 
-                            max(MIN_ZOOM, tile.scale + (dy))
-                        )
+            tile.scale = min(MAX_ZOOM,
+                             max(MIN_ZOOM, tile.scale + (dy))
+                             )
             tile.x -= pdx * (oldWidth - tile.width)
             tile.y -= pdy * (oldHeight - tile.height)
+
 
 @game.event
 def on_mouse_press(x, y, b, m):

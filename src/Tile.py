@@ -1,4 +1,6 @@
 from pyglet import sprite, graphics
+
+
 class Tile(sprite.Sprite):
     def __init__(self, x, y, size, defaultImage, batch, value=None, isRevealed=False, isFlagged=False):
         """
@@ -12,7 +14,8 @@ class Tile(sprite.Sprite):
         self.isRevealed = isRevealed
         self.isFlagged = isFlagged
         self.value = value
-        super(Tile, self).__init__(defaultImage, x, y, batch=batch, group=graphics.OrderedGroup(-1))
-        
+        super(Tile, self).__init__(defaultImage, x, y,
+                                   batch=batch, group=graphics.OrderedGroup(-1))
+
         # Scale the tile properly
         self.scale = size / self.width

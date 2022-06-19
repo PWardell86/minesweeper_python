@@ -4,13 +4,16 @@ from SettingsWindow import SettingsWindow
 from GameButton import GameButton
 from Tile import Tile
 from Counter import Counter
+from os import path
+
+working_dir = path.dirname(path.realpath(__file__))
+resource.path = [working_dir, path.realpath('resources')]
 
 def button_size(h):
     return h / 1.5
 
-
 class Minesweeper(window.Window):
-    def __init__(self, theme="Star Wars 2", difficulty=0.25, gameSize=(10, 10), windowSize=(500, 500)):
+    def __init__(self, theme="Default", difficulty=0.25, gameSize=(10, 10), windowSize=(500, 500)):
         """
         Extends pyglet.window.Window and contains a minesweeper game.
         - theme: The name of the folder that contains the theme to use
@@ -20,21 +23,18 @@ class Minesweeper(window.Window):
         """
         super(Minesweeper, self).__init__(
             windowSize[0], windowSize[1], caption="Minesweeper", style='dialog')
-        tp = f"Themes/{theme}"
-
+        self.themeDir = theme
         self.batch = graphics.Batch()
 
-        # Initialize class variables for the game and GUI
         self.tiles = []
         self.difficulty = difficulty
         self.gameSize = gameSize
-        self.theme = theme
         self.started = False
         self.gameOver = False
 
         # Initialize the top bar, and counters for timer and flags
         self.sprtTopBar = sprite.Sprite(resource.image(
-            f"Themes/{theme}/TopBar.png"), batch=self.batch, group=graphics.OrderedGroup(1))
+            f"{self.themeDir}/TopBar.png"), batch=self.batch, group=graphics.OrderedGroup(1))
         self.barHeight = self.sprtTopBar.height
         self.sprtTopBar.y = self.height - self.barHeight
         self.sprtTopBar.scale_x = self.width / self.sprtTopBar.width
@@ -48,19 +48,19 @@ class Minesweeper(window.Window):
         ]
 
         # Initialize the buttons for a new game and settings
-        pImage = resource.image(f"{tp}/settings0.png")
-        rImage = resource.image(f"{tp}/settings1.png")
+        pImage = resource.image(f"{self.themeDir}/settings0.png")
+        rImage = resource.image(f"{self.themeDir}/settings1.png")
         bSize = button_size(self.barHeight)
         bYLoc = (self.height - (self.barHeight) / 2) - bSize / 2
         def btnCommand(): return SettingsWindow(self.save)
 
         self.btnSettings = GameButton(self.width / 2 - (bSize + 4), bYLoc,
-                                  rImage, pImage, bSize, bSize, btnCommand, self.batch)
+                                      rImage, pImage, bSize, bSize, btnCommand, self.batch)
 
-        pImage = resource.image(f"{tp}/newGame0.png")
-        rImage = resource.image(f"{tp}/newGame1.png")
+        pImage = resource.image(f"{self.themeDir}/newGame0.png")
+        rImage = resource.image(f"{self.themeDir}/newGame1.png")
         self.btnNewGame = GameButton((self.width / 2), bYLoc,
-                                 rImage, pImage, bSize, bSize, self.reset, self.batch)
+                                     rImage, pImage, bSize, bSize, self.reset, self.batch)
 
         self.cntTimer = Counter(
             self.width / 3, self.height - (self.barHeight / 2), self.batch)
@@ -69,17 +69,17 @@ class Minesweeper(window.Window):
             2 * self.width / 3, self.height - (self.barHeight / 2), self.batch)
 
         # Contains the images for each tile value
-        self.themeKey = {0: resource.image(f"{tp}/none.png"),
-                         1: resource.image(f"{tp}/one.png"),
-                         2: resource.image(f"{tp}/two.png"),
-                         3: resource.image(f"{tp}/three.png"),
-                         4: resource.image(f"{tp}/four.png"),
-                         5: resource.image(f"{tp}/five.png"),
-                         6: resource.image(f"{tp}/six.png"),
-                         7: resource.image(f"{tp}/seven.png"),
-                         8: resource.image(f"{tp}/eight.png"),
-                         9: resource.image(f"{tp}/bomb.png"),
-                         10: resource.image(f"{tp}/blank.png")}
+        self.themeKey = {0: resource.image(f"{self.themeDir}/none.png"),
+                         1: resource.image(f"{self.themeDir}/one.png"),
+                         2: resource.image(f"{self.themeDir}/two.png"),
+                         3: resource.image(f"{self.themeDir}/three.png"),
+                         4: resource.image(f"{self.themeDir}/four.png"),
+                         5: resource.image(f"{self.themeDir}/five.png"),
+                         6: resource.image(f"{self.themeDir}/six.png"),
+                         7: resource.image(f"{self.themeDir}/seven.png"),
+                         8: resource.image(f"{self.themeDir}/eight.png"),
+                         9: resource.image(f"{self.themeDir}/bomb.png"),
+                         10: resource.image(f"{self.themeDir}/blank.png")}
 
         # Generate unrevealed tiles with no other values as a palceholder until the game is started
         for y in range(self.gameSize[1]):
@@ -96,7 +96,8 @@ class Minesweeper(window.Window):
         self.batch.draw()
 
     def save(self, theme, difficulty, gameSize, winSize):
-        self.theme = theme
+        self.themeDir = theme
+        self.setTheme(theme)
         self.difficulty = difficulty
         self.gameSize = gameSize
         self.width = winSize[0]
@@ -176,7 +177,7 @@ class Minesweeper(window.Window):
         Ends the game. Resets the timer, flag count, score and board.
         """
         self.btnNewGame.image = resource.image(
-            f"Themes/{self.theme}/newGameLost1.png")
+            f"{self.themeDir}/newGameLost1.png")
         score = 0
         self.gameOver = True
         self.cntTimer.locked = True
@@ -194,17 +195,17 @@ class Minesweeper(window.Window):
         Updates the theme of the game to the given folder, name
         """
         # Set the theme of the game theme folder
-        self.themeKey = {0: resource.image(f"Themes/{name}/none.png"),
-                         1: resource.image(f"Themes/{name}/one.png"),
-                         2: resource.image(f"Themes/{name}/two.png"),
-                         3: resource.image(f"Themes/{name}/three.png"),
-                         4: resource.image(f"Themes/{name}/four.png"),
-                         5: resource.image(f"Themes/{name}/five.png"),
-                         6: resource.image(f"Themes/{name}/six.png"),
-                         7: resource.image(f"Themes/{name}/seven.png"),
-                         8: resource.image(f"Themes/{name}/eight.png"),
-                         9: resource.image(f"Themes/{name}/bomb.png"),
-                         10: resource.image(f"Themes/{name}/blank.png")}
+        self.themeKey = {0: resource.image(f"{self.themeDir}/none.png"),
+                         1: resource.image(f"{self.themeDir}/one.png"),
+                         2: resource.image(f"{self.themeDir}/two.png"),
+                         3: resource.image(f"{self.themeDir}/three.png"),
+                         4: resource.image(f"{self.themeDir}/four.png"),
+                         5: resource.image(f"{self.themeDir}/five.png"),
+                         6: resource.image(f"{self.themeDir}/six.png"),
+                         7: resource.image(f"{self.themeDir}/seven.png"),
+                         8: resource.image(f"{self.themeDir}/eight.png"),
+                         9: resource.image(f"{self.themeDir}/bomb.png"),
+                         10: resource.image(f"{self.themeDir}/blank.png")}
 
     def reset(self):
         """
@@ -224,22 +225,22 @@ class Minesweeper(window.Window):
         ]
 
         self.sprtTopBar = sprite.Sprite(resource.image(
-            f"Themes/{self.theme}/TopBar.png"), batch=self.batch, group=graphics.OrderedGroup(1))
+            f"{self.themeDir}/TopBar.png"), batch=self.batch, group=graphics.OrderedGroup(1))
         self.sprtTopBar.y = self.height - self.barHeight
         self.sprtTopBar.scale_x = self.width / self.sprtTopBar.width
 
         # Initialize the buttons for a new game and settings
-        pImage = resource.image(f"Themes/{self.theme}/settings0.png")
-        rImage = resource.image(f"Themes/{self.theme}/settings1.png")
+        pImage = resource.image(f"{self.themeDir}/settings0.png")
+        rImage = resource.image(f"{self.themeDir}/settings1.png")
         bSize = button_size(self.barHeight)
         bYLoc = (self.height - (self.barHeight) / 2) - bSize / 2
         def btnCommand(): return SettingsWindow(self.save)
 
         self.btnSettings = GameButton(self.width / 2 - (bSize + 4), bYLoc,
-                                  rImage, pImage, bSize, bSize, btnCommand, self.batch)
+                                      rImage, pImage, bSize, bSize, btnCommand, self.batch)
 
-        pImage = resource.image(f"Themes/{self.theme}/newGame0.png")
-        rImage = resource.image(f"Themes/{self.theme}/newGame1.png")
+        pImage = resource.image(f"{self.themeDir}/newGame0.png")
+        rImage = resource.image(f"{self.themeDir}/newGame1.png")
 
         self.cntFlags.setCounter(0)
         self.cntFlags.setCounter(0)
@@ -252,7 +253,7 @@ class Minesweeper(window.Window):
                 row += [newTile]
             self.tiles += [row]
         self.btnNewGame = GameButton((self.width / 2), bYLoc,
-                                 rImage, pImage, bSize, bSize, self.reset, self.batch)
+                                     rImage, pImage, bSize, bSize, self.reset, self.batch)
 
     def clickTile(self, x, y):
         if not(self.gameOver):
@@ -260,7 +261,7 @@ class Minesweeper(window.Window):
             self.revealTile(x, y)
 
     def revealTile(self, x, y):
-        # Reveals the tile at the given coordinate
+        """Reveals the tile at the given coordinate"""
         tile = self.tiles[y][x]
         if not(tile.isFlagged) and not(tile.isRevealed):
             tile.isRevealed = True
@@ -269,7 +270,7 @@ class Minesweeper(window.Window):
                 self.clearBlanks(x, y)
             elif tile.value == 9:
                 tile.image = resource.image(
-                    f"Themes/{self.theme}/incorrectBomb.png")
+                    f"{self.themeDir}/incorrectBomb.png")
                 self.endGame()
 
     def autoClear(self, x, y):
@@ -301,7 +302,7 @@ class Minesweeper(window.Window):
             self.cntFlags.minus()
         elif tile.isRevealed is False:
             tile.isFlagged = True
-            tile.image = resource.image(f"Themes/{self.theme}/flag.png")
+            tile.image = resource.image(f"{self.themeDir}/flag.png")
             self.cntFlags.plus()
 
     def clearBlanks(self, x, y):

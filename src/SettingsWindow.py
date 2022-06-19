@@ -1,8 +1,8 @@
-from tkinter import (DoubleVar, StringVar, ttk, Tk, mainloop)
+from tkinter import DoubleVar, StringVar, ttk, Tk, mainloop
 from os import listdir
 
 class SettingsWindow(Tk):
-    def __init__(self, saveCommand, theme="Star Wars 2", width=250, height=300, name="Settings"):
+    def __init__(self, saveCommand, width=250, height=300, name="Settings"):
         super(SettingsWindow, self).__init__("Settings")
         self.wm_attributes('-toolwindow', True)
         self.saveCommand = saveCommand
@@ -11,7 +11,7 @@ class SettingsWindow(Tk):
         self.setDiff = 0
         self.sclDiff = DoubleVar()
 
-        path = "../2.0/Themes"
+        path = "resources"
         themes = listdir(path)
         self.frmButtons = ttk.Frame(self)
         self.frmButtons.grid(column=0, row=1)
@@ -26,8 +26,8 @@ class SettingsWindow(Tk):
             self.frmInput, textvariable=self.lblDiffText, width=14)
         self.lblTheme = ttk.Label(self.frmInput, text="Theme: ")
 
-        def lblDiffUpdate(s):
-            self.lblDiffText.set(f"Difficulty: {s[:4]}")
+        def lblDiffUpdate(sliderValue: str):
+            self.lblDiffText.set(f"Difficulty: {sliderValue[:4]}")
 
         self.cmboTheme = ttk.Combobox(self.frmInput, values=themes)
         self.sclDifficulty = ttk.Scale(
