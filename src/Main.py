@@ -1,4 +1,4 @@
-from MinesweeperGUI import Minesweeper
+from MinesweeperMVC import Minesweeper
 from pyglet import *
 game = Minesweeper(gameSize=(20, 15))
 
