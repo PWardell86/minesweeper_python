@@ -2,7 +2,7 @@ from pyglet import sprite, graphics
 
 
 class Tile(sprite.Sprite):
-    def __init__(self, x, y, size, defaultImage, batch, value=None, isRevealed=False, isFlagged=False):
+    def __init__(self, x, y, size, defaultImage, batch, value=None):
         """
         Defines a tile for the game
             - isRevealed --> if the tile has been clicked / revealed
@@ -11,8 +11,8 @@ class Tile(sprite.Sprite):
                 - 0 - 8 are regular values
                 - 9 is a bomb
         """
-        self.isRevealed = isRevealed
-        self.isFlagged = isFlagged
+        self.isRevealed = False
+        self.isFlagged = False
         self.value = value
         super(Tile, self).__init__(defaultImage, x, y,
                                    batch=batch, group=graphics.OrderedGroup(-1))

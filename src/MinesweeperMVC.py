@@ -341,6 +341,7 @@ class Minesweeper(window.Window):
         self.btnNewGame.clickEvent(x, y, 0)
 
     def on_mouse_scroll(self, x, y, scroll_x, scroll_y):
+        return
         MAX_ZOOM = 5
         MIN_ZOOM = 1
         xZoomTo = int((x / self.width) * len(self.tiles[0]))
