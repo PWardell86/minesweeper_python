@@ -3,14 +3,16 @@ from random import random
 from SettingsWindow import SettingsWindow
 from GameButton import GameButton
 from Tile import Tile
-from Counter import Counter
+from Counter import Counter,Timer
 from os import path
 
 working_dir = path.dirname(path.realpath(__file__))
 resource.path = [working_dir, path.realpath('resources')]
 
+
 def button_size(h):
     return h / 1.5
+
 
 class Minesweeper(window.Window):
     def __init__(self, theme="Default", difficulty=0.25, gameSize=(10, 10), windowSize=(500, 500)):
@@ -62,24 +64,14 @@ class Minesweeper(window.Window):
         self.btnNewGame = GameButton((self.width / 2), bYLoc,
                                      rImage, pImage, bSize, bSize, self.reset, self.batch)
 
-        self.cntTimer = Counter(
+        self.timer = Timer(
             self.width / 3, self.height - (self.barHeight / 2), self.batch)
 
         self.cntFlags = Counter(
             2 * self.width / 3, self.height - (self.barHeight / 2), self.batch)
 
         # Contains the images for each tile value
-        self.themeKey = {0: resource.image(f"{self.themeDir}/none.png"),
-                         1: resource.image(f"{self.themeDir}/one.png"),
-                         2: resource.image(f"{self.themeDir}/two.png"),
-                         3: resource.image(f"{self.themeDir}/three.png"),
-                         4: resource.image(f"{self.themeDir}/four.png"),
-                         5: resource.image(f"{self.themeDir}/five.png"),
-                         6: resource.image(f"{self.themeDir}/six.png"),
-                         7: resource.image(f"{self.themeDir}/seven.png"),
-                         8: resource.image(f"{self.themeDir}/eight.png"),
-                         9: resource.image(f"{self.themeDir}/bomb.png"),
-                         10: resource.image(f"{self.themeDir}/blank.png")}
+        self.themeKey = self.getThemeKey()
 
         # Generate unrevealed tiles with no other values as a palceholder until the game is started
         for y in range(self.gameSize[1]):
@@ -90,19 +82,6 @@ class Minesweeper(window.Window):
                                self.batch, None)
                 row += [newTile]
             self.tiles += [row]
-
-    def on_draw(self):
-        self.clear()
-        self.batch.draw()
-
-    def save(self, theme, difficulty, gameSize, winSize):
-        self.themeDir = theme
-        self.setTheme(theme)
-        self.difficulty = difficulty
-        self.gameSize = gameSize
-        self.width = winSize[0]
-        self.height = winSize[1]
-        self.reset()
 
     def generateTiles(self, startX, startY):
         """
@@ -149,26 +128,21 @@ class Minesweeper(window.Window):
                             bombsNear += 1
                     self.tiles[y][x].value = bombsNear
 
-    def getNearTiles(self, x, y):
+    def setTheme(self, name):
         """
-        Returns all tiles adjacent to the tile at [y][x] in self.tiles
-        - Can return 4, 6, or 9 tiles
+        Updates the theme of the game to the given folder, name
         """
-        nearTiles = []
-        for px in range(x - 1, x + 2):
-            for py in range(y - 1, y + 2):
-                if px != x or py != y:
-                    if px >= 0 and px < self.gameSize[0] and py >= 0 and py < self.gameSize[1]:
-                        nearTiles += [self.tiles[py][px]]
-        return nearTiles
+        # Set the theme of the game theme folder
+        self.themeDir = name
+        self.themeKey = self.getThemeKey()
 
     def startGame(self, startX, startY):
         """
         Starts the game at the given tile coordinate
         """
         self.started = True
-        self.cntTimer.locked = False
-        self.cntTimer.locked = False
+        self.timer.locked = False
+        self.cntFlags.locked = False
         self.generateTiles(startX, startY)
         self.revealTile(startX, startY)
 
@@ -180,8 +154,7 @@ class Minesweeper(window.Window):
             f"{self.themeDir}/newGameLost1.png")
         score = 0
         self.gameOver = True
-        self.cntTimer.locked = True
-        self.cntTimer.locked = True
+        self.timer.locked = True
         for row in self.tiles:
             for tile in row:
                 if tile.value == 9:
@@ -189,71 +162,6 @@ class Minesweeper(window.Window):
                         score += 1
                     elif not(tile.isRevealed):
                         tile.image = self.themeKey[9]
-
-    def setTheme(self, name):
-        """
-        Updates the theme of the game to the given folder, name
-        """
-        # Set the theme of the game theme folder
-        self.themeKey = {0: resource.image(f"{self.themeDir}/none.png"),
-                         1: resource.image(f"{self.themeDir}/one.png"),
-                         2: resource.image(f"{self.themeDir}/two.png"),
-                         3: resource.image(f"{self.themeDir}/three.png"),
-                         4: resource.image(f"{self.themeDir}/four.png"),
-                         5: resource.image(f"{self.themeDir}/five.png"),
-                         6: resource.image(f"{self.themeDir}/six.png"),
-                         7: resource.image(f"{self.themeDir}/seven.png"),
-                         8: resource.image(f"{self.themeDir}/eight.png"),
-                         9: resource.image(f"{self.themeDir}/bomb.png"),
-                         10: resource.image(f"{self.themeDir}/blank.png")}
-
-    def reset(self):
-        """
-        Resets the game to its initial state with all class variables
-        """
-        # Resets the game
-        self.started = False
-        self.gameOver = False
-        self.cntFlags.text = "0"
-        self.tiles = []
-        self.tileSize = min(
-            self.width // self.gameSize[0], (self.height - self.barHeight) // self.gameSize[1])
-        self.emptySpace = [
-            (self.width - (self.gameSize[0] * self.tileSize)) / 2,
-            (self.height - self.barHeight -
-             (self.gameSize[1] * self.tileSize)) / 2
-        ]
-
-        self.sprtTopBar = sprite.Sprite(resource.image(
-            f"{self.themeDir}/TopBar.png"), batch=self.batch, group=graphics.OrderedGroup(1))
-        self.sprtTopBar.y = self.height - self.barHeight
-        self.sprtTopBar.scale_x = self.width / self.sprtTopBar.width
-
-        # Initialize the buttons for a new game and settings
-        pImage = resource.image(f"{self.themeDir}/settings0.png")
-        rImage = resource.image(f"{self.themeDir}/settings1.png")
-        bSize = button_size(self.barHeight)
-        bYLoc = (self.height - (self.barHeight) / 2) - bSize / 2
-        def btnCommand(): return SettingsWindow(self.save)
-
-        self.btnSettings = GameButton(self.width / 2 - (bSize + 4), bYLoc,
-                                      rImage, pImage, bSize, bSize, btnCommand, self.batch)
-
-        pImage = resource.image(f"{self.themeDir}/newGame0.png")
-        rImage = resource.image(f"{self.themeDir}/newGame1.png")
-
-        self.cntFlags.setCounter(0)
-        self.cntFlags.setCounter(0)
-        for y in range(self.gameSize[1]):
-            row = []
-            for x in range(self.gameSize[0]):
-                newTile = Tile(x * self.tileSize + self.emptySpace[0], y * self.tileSize + self.emptySpace[1],
-                               self.tileSize, self.themeKey[10],
-                               self.batch, None)
-                row += [newTile]
-            self.tiles += [row]
-        self.btnNewGame = GameButton((self.width / 2), bYLoc,
-                                     rImage, pImage, bSize, bSize, self.reset, self.batch)
 
     def clickTile(self, x, y):
         if not(self.gameOver):
@@ -272,23 +180,6 @@ class Minesweeper(window.Window):
                 tile.image = resource.image(
                     f"{self.themeDir}/incorrectBomb.png")
                 self.endGame()
-
-    def autoClear(self, x, y):
-        """
-        If all the bombs around a revealed tile are flagged, this will reveal the rest of the tiles
-        """
-        tile = self.tiles[y][x]
-        if tile.isRevealed:
-            flagCount = 0
-            for nearTile in self.getNearTiles(x, y):
-                if nearTile.isFlagged:
-                    flagCount += 1
-            if flagCount == tile.value:
-                for px in range(x - 1, x + 2):
-                    for py in range(y - 1, y + 2):
-                        if px != x or py != y:
-                            if px >= 0 and px < self.gameSize[0] and py >= 0 and py < self.gameSize[1]:
-                                self.revealTile(px, py)
 
     def flagTile(self, x, y):
         """
@@ -315,3 +206,155 @@ class Minesweeper(window.Window):
                 if px != x or py != y:
                     if px >= 0 and px < self.gameSize[0] and py >= 0 and py < self.gameSize[1]:
                         self.revealTile(px, py)
+
+    def autoClear(self, x, y):
+        """
+        If all the bombs around a revealed tile are flagged, this will reveal the rest of the tiles
+        """
+        tile = self.tiles[y][x]
+        if tile.isRevealed:
+            flagCount = 0
+            for nearTile in self.getNearTiles(x, y):
+                if nearTile.isFlagged:
+                    flagCount += 1
+            if flagCount == tile.value:
+                for px in range(x - 1, x + 2):
+                    for py in range(y - 1, y + 2):
+                        if px != x or py != y:
+                            if px >= 0 and px < self.gameSize[0] and py >= 0 and py < self.gameSize[1]:
+                                self.revealTile(px, py)
+    def getNearTiles(self, x, y):
+        """
+        Returns all tiles adjacent to the tile at [y][x] in self.tiles
+        - Can return 4, 6, or 9 tiles
+        """
+        nearTiles = []
+        for px in range(x - 1, x + 2):
+            for py in range(y - 1, y + 2):
+                if px != x or py != y:
+                    if px >= 0 and px < self.gameSize[0] and py >= 0 and py < self.gameSize[1]:
+                        nearTiles += [self.tiles[py][px]]
+        return nearTiles
+
+    def getThemeKey(self):
+        d = {0: "none.png",
+             1: "one.png",
+             2: "two.png",
+             3: "three.png",
+             4: "four.png",
+             5: "five.png",
+             6: "six.png",
+             7: "seven.png",
+             8: "eight.png",
+             9: "bomb.png",
+             10: "blank.png"}
+
+        for key in d.keys():
+            d[key] = resource.image(f"{self.themeDir}/{d[key]}")
+        return d
+
+    def save(self, theme, difficulty, gameSize, winSize):
+        self.themeDir = theme
+        self.setTheme(theme)
+        self.difficulty = difficulty
+        self.gameSize = gameSize
+        self.width = winSize[0]
+        self.height = winSize[1]
+        self.reset()
+
+    def reset(self):
+        """
+        Resets the game to its initial state with all class variables
+        """
+        # Resets the game
+        self.started = False
+        self.gameOver = False
+        self.cntFlags.text = "0"
+        self.tiles = []
+        self.tileSize = min(
+            self.width // self.gameSize[0], (self.height - self.barHeight) // self.gameSize[1])
+        self.emptySpace = [
+            (self.width - (self.gameSize[0] * self.tileSize)) / 2,
+            (self.height - self.barHeight -
+            (self.gameSize[1] * self.tileSize)) / 2
+        ]
+
+        self.sprtTopBar = sprite.Sprite(
+            resource.image(f"{self.themeDir}/TopBar.png"), batch=self.batch, group=graphics.OrderedGroup(1))
+        self.sprtTopBar.y = self.height - self.barHeight
+        self.sprtTopBar.scale_x = self.width / self.sprtTopBar.width
+
+        # Initialize the buttons for a new game and settings
+        pressedImage = resource.image(f"{self.themeDir}/settings0.png")
+        releasedImage = resource.image(f"{self.themeDir}/settings1.png")
+        bSize = button_size(self.barHeight)
+        bYLoc = (self.height - (self.barHeight) / 2) - bSize / 2
+        def btnCommand(): return SettingsWindow(self.save)
+
+        self.btnSettings = GameButton(self.width / 2 - (bSize + 4), bYLoc,
+                                    releasedImage, pressedImage, bSize, bSize, btnCommand, self.batch)
+
+        pressedImage = resource.image(f"{self.themeDir}/newGame0.png")
+        releasedImage = resource.image(f"{self.themeDir}/newGame1.png")
+        self.btnNewGame = GameButton((self.width / 2), bYLoc,
+                                    releasedImage, pressedImage, bSize, bSize, self.reset, self.batch)
+
+        self.cntFlags.setCounter(0)
+        self.timer.setCounter(0)
+        self.timer.locked = True
+    
+        for y in range(self.gameSize[1]):
+            row = []
+            for x in range(self.gameSize[0]):
+                newTile = Tile(x * self.tileSize + self.emptySpace[0], y * self.tileSize + self.emptySpace[1],
+                            self.tileSize, self.themeKey[10],
+                            self.batch, None)
+                row += [newTile]
+            self.tiles += [row]
+
+    def on_draw(self):
+        self.clear()
+        self.batch.draw()
+
+    def on_mouse_release(self, x, y, b, m):
+        # Get mouse coordinates on the board
+        real_tile_size = self.tileSize
+        posX = int((x - self.emptySpace[0]) / real_tile_size)
+        posY = int((y - self.emptySpace[1]) / real_tile_size)
+
+        # Check if the mouse is in the top bar
+        self.btnSettings.clickEvent(x, y, 1)
+        self.btnNewGame.clickEvent(x, y, 1)
+        if (posX >= 0 and posX < self.gameSize[0]) and (posY >= 0 and posY < self.gameSize[1]):
+            # Place a flag on the tile if key 4 is pressed (right click)
+            if b == 4:
+                self.flagTile(posX, posY)
+
+            elif b == 1:  # Reveal the tile if key 1 is pressed (left click)
+                if self.started:  # Check if the game has started and start it if not
+                    self.clickTile(posX, posY)
+                else:
+                    self.startGame(posX, posY)
+
+    def on_mouse_press(self, x, y, b, m):
+        self.btnSettings.clickEvent(x, y, 0)
+        self.btnNewGame.clickEvent(x, y, 0)
+
+    def on_mouse_scroll(self, x, y, scroll_x, scroll_y):
+        MAX_ZOOM = 5
+        MIN_ZOOM = 1
+        xZoomTo = int((x / self.width) * len(self.tiles[0]))
+        yZoomTo = int((y / self.height) * len(self.tiles))
+
+        for idy, row in enumerate(self.tiles):
+            for idx, tile in enumerate(row):
+                pdy = idy - yZoomTo
+                pdx = idx - xZoomTo
+                oldWidth = tile.width
+                oldHeight = tile.height
+
+                tile.scale = min(MAX_ZOOM,
+                                max(MIN_ZOOM, tile.scale + (scroll_y))
+                                )
+                tile.x -= pdx * (oldWidth - tile.width)
+                tile.y -= pdy * (oldHeight - tile.height)
