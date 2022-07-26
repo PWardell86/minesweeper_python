@@ -1,15 +1,15 @@
 from pyglet import text, graphics, clock
 
+
 class Counter(text.Label):
-    def __init__(self, x, y, batch, initial=0, font="Joystix Monospace", fontSize=20, color=(0, 200, 0, 255)):
+    def __init__(self, x, y, batch, initial=0, font="Joystix Monospace", fontSize=20, colour=(0, 200, 0, 255)):
         super(Counter, self).__init__(
             str(initial),
-            font_name=font, font_size=fontSize, color=color,
+            font_name=font, font_size=fontSize, color=colour,
             anchor_x="center", anchor_y="center", x=x, y=y,
-            batch=batch, group=graphics.OrderedGroup(2))  # Move it to the top so it can be seen
+            batch=batch, group=graphics.OrderedGroup(2))  # Move it to the top so it can always be seen
         self.locked = False
         self.count = initial
-        
 
     def plus(self):
         if self.locked:
@@ -28,6 +28,7 @@ class Counter(text.Label):
             return
         self.count = count
         self.text = str(count)
+
 
 class Timer(Counter):
     def __init__(self, x, y, batch, initial=0, font="Joystix Monospace", fontSize=20, color=(0, 200, 0, 255)):

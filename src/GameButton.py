@@ -13,8 +13,7 @@ class GameButton(sprite.Sprite):
         self.command = command
 
     def clickEvent(self, cx, cy, released):
-        if (cx > self.x and cx < (self.x + self.width) and
-                cy > self.y and cy < (self.y + self.height)):
+        if self.x < cx < (self.x + self.width) and self.y < cy < self.y + self.height:
             if released == 0:
                 self.image = self.pressedImage
             if released == 1:

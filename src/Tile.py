@@ -16,6 +16,5 @@ class Tile(sprite.Sprite):
         self.value = value
         super(Tile, self).__init__(defaultImage, x, y,
                                    batch=batch, group=graphics.OrderedGroup(-1))
-
         # Scale the tile properly
         self.scale = size / self.width

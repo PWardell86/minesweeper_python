@@ -1,5 +1,6 @@
 from MinesweeperMVC import Minesweeper
-from pyglet import *
+from pyglet import app, gl
+
 game = Minesweeper(gameSize=(20, 15))
 
 # Remove aliasing
