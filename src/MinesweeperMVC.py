@@ -34,6 +34,7 @@ class Minesweeper(window.Window):
         self.gameSize = gameSize
         self.started = False
         self.gameOver = False
+        self.dragging = False
 
         # Initialize the top bar, and counters for timer and flags
         self.sprtTopBar = sprite.Sprite(resource.image(
@@ -317,7 +318,10 @@ class Minesweeper(window.Window):
         self.clear()
         self.batch.draw()
 
-    def on_mouse_release(self, x, y, b, m):
+    def on_mouse_release(self, x, y, button, modifiers):
+        if self.dragging:
+            self.dragging = False
+            return
         # Get mouse coordinates on the board
         x_pos = int((x - self.emptySpace[0]) // self.tileSize)
         y_pos = int((y - self.emptySpace[1]) // self.tileSize)
@@ -327,18 +331,26 @@ class Minesweeper(window.Window):
         self.btnNewGame.clickEvent(x, y, 1)
         if 0 <= x_pos < self.gameSize[0] and 0 <= y_pos < self.gameSize[1]:
             # Place a flag on the tile if key 4 is pressed (right click)
-            if b == 4:
+            if button == 4:
                 self.flagTile(x_pos, y_pos)
 
-            elif b == 1:  # Reveal the tile if key 1 is pressed (left click)
+            elif button == 1:  # Reveal the tile if key 1 is pressed (left click)
                 if self.started:  # Check if the game has started and start it if not
                     self.clickTile(x_pos, y_pos)
                 else:
                     self.startGame(x_pos, y_pos)
 
-    def on_mouse_press(self, x, y, b, m):
+    def on_mouse_press(self, x, y, buttons, modifiers):
         self.btnSettings.clickEvent(x, y, 0)
         self.btnNewGame.clickEvent(x, y, 0)
+
+    def on_mouse_drag(self, x, y, dx, dy, buttons, modifiers):
+        self.dragging = True
+        for row in self.tiles:
+            for tile in row:
+                tile.x += dx
+                tile.y += dy
+        self.update_empty_space()
 
     def on_mouse_scroll(self, x, y, scroll_x, scroll_y):
         return
@@ -353,3 +365,8 @@ class Minesweeper(window.Window):
                 pdx = idx - xZoomTo
                 oldWidth = tile.width
                 oldHeight = tile.height
+
+    def update_empty_space(self):
+        cornerTile = self.tiles[0][0]
+        self.emptySpace[0] = cornerTile.x
+        self.emptySpace[1] = cornerTile.y
