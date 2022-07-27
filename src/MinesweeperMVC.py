@@ -323,8 +323,8 @@ class Minesweeper(window.Window):
             self.dragging = False
             return
         # Get mouse coordinates on the board
-        x_pos = int((x - self.emptySpace[0]) // self.tileSize)
-        y_pos = int((y - self.emptySpace[1]) // self.tileSize)
+        x_pos = int((x - self.emptySpace[0]) / self.tileSize)
+        y_pos = int((y - self.emptySpace[1]) / self.tileSize)
 
         # Check if the mouse is in the top bar
         self.btnSettings.clickEvent(x, y, 1)
@@ -352,19 +352,33 @@ class Minesweeper(window.Window):
                 tile.y += dy
         self.update_empty_space()
 
-    def on_mouse_scroll(self, x, y, scroll_x, scroll_y):
-        return
-        MAX_ZOOM = 5
-        MIN_ZOOM = 1
-        xZoomTo = int((x / self.width) * len(self.tiles[0]))
-        yZoomTo = int((y / self.height) * len(self.tiles))
+    def on_mouse_scroll(self, x, y, dx, dy):
+        # There is never a time when we want to scale tiles differently, so...
+        newScale = dy * 0.05
+        xIndex = (x - self.emptySpace[0])
+        yIndex = (y - self.emptySpace[1])
 
-        for idy, row in enumerate(self.tiles):
-            for idx, tile in enumerate(row):
-                pdy = idy - yZoomTo
-                pdx = idx - xZoomTo
-                oldWidth = tile.width
-                oldHeight = tile.height
+        # Move the tile in the bottom_corner and build all tiles off of that
+        tile = self.tiles[0][0]
+
+        oldSize = self.tileSize
+        tile.scale += newScale
+        currentSize = self.tiles[0][0].width
+        sizeDifference = oldSize - currentSize
+
+        tile.y += sizeDifference * (yIndex - tile.y) / currentSize
+        tile.x += sizeDifference * (xIndex - tile.x) / currentSize
+
+        for index1, row in enumerate(self.tiles):
+            for index2, t in enumerate(row):
+                if index1 == 0 and index2 == 0:
+                    continue
+                t.scale += newScale
+                t.y = index1 * currentSize + tile.y
+                t.x = index2 * currentSize + tile.x
+        self.tileSize = self.tiles[0][0].width
+        self.emptySpace[0] = self.tiles[0][0].x
+        self.emptySpace[1] = self.tiles[0][0].y
 
     def update_empty_space(self):
         cornerTile = self.tiles[0][0]
