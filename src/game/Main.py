@@ -1,7 +1,8 @@
 from MinesweeperMVC import Minesweeper
 from src.bot.SimpleBot import SimpleBot
 from pyglet import app, gl, clock
-playWithBot = True
+
+playWithBot = False
 
 game = Minesweeper(gameSize=(20, 15))
 if playWithBot:

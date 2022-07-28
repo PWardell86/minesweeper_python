@@ -3,69 +3,67 @@ from os import listdir
 
 
 class SettingsWindow(Tk):
-    def __init__(self, saveCommand, width=250, height=300, name="Settings"):
-        super(SettingsWindow, self).__init__("Settings", f"{width}x{height}")
+    def __init__(self,  saveCommand, width=250, height=300, name="Settings"):
+        super(SettingsWindow,self) .__init__("Settings", f"{width}x{height}")
         self.wm_attributes("-toolwindow", True)
-        self.saveCommand = saveCommand
         self.title(name)
-
-        self.setDiff = 0
-        self.sclDiff = DoubleVar()
-
         path = "resources"
         themes = listdir(path)
-        self.frmButtons = ttk.Frame(self)
-        self.frmButtons.grid(column=0, row=1)
+        frmButtons = ttk.Frame(self)
+        frmButtons.grid(column=0, row=1)
 
-        self.frame_input = ttk.Frame(self)
-        self.frame_input.grid(column=0, row=0)
+        frame_input = ttk.Frame(self)
+        frame_input.grid(column=0, row=0)
 
-        self.label_windowSize = ttk.Label(self.frame_input, text="Window Size: ")
-        self.label_gameSize = ttk.Label(self.frame_input, text="Game Size: ")
-        self.label_difficultyText = StringVar(self.frame_input, value="Difficulty: 0.3")
-        self.label_difficulty = ttk.Label(
-            self.frame_input, textvariable=self.label_difficultyText, width=14)
-        self.label_theme = ttk.Label(self.frame_input, text="Theme: ")
+        self.difficulty = 0.16
+        label_windowSize = ttk.Label(frame_input, text="Window Size: ")
+        label_gameSize = ttk.Label(frame_input, text="Game Size: ")
+        label_difficultyText = StringVar(frame_input, value=f"Difficulty: {self.difficulty}")
+        label_difficulty = ttk.Label(
+            frame_input, textvariable=label_difficultyText, width=14)
+        label_theme = ttk.Label(frame_input, text="Theme: ")
 
-        def lblDiffUpdate(sliderValue: str):
+        def lblDiffUpdate(value):
+            self.difficulty = float(value)
             # Only take the first 4 digits for difficulty: 0.00
-            self.label_difficultyText.set(f"Difficulty: {sliderValue[:4]}")
+            label_difficultyText.set(f"Difficulty: {value[:4]}")
 
-        self.combo_theme = ttk.Combobox(self.frame_input, values=themes)
-        self.scale_difficulty = ttk.Scale(
-            self.frame_input, value=0.3, from_=0, to=1, variable=self.sclDiff, command=lblDiffUpdate)
-        self.entry_windowSize = ttk.Entry(self.frame_input)
-        self.entry_gameSize = ttk.Entry(self.frame_input)
+        combo_theme = ttk.Combobox(frame_input, values=themes)
+        scale_difficulty = ttk.Scale(
+            frame_input, value=0.16, from_=0, to=1, command=lblDiffUpdate)
+        entry_windowSize = ttk.Entry(frame_input)
+        entry_gameSize = ttk.Entry(frame_input)
 
-        self.label_windowSize.grid(column=0, row=0, pady=5)
-        self.label_gameSize.grid(column=0, row=1, pady=5)
-        self.label_difficulty.grid(column=0, row=2, pady=5)
-        self.label_theme.grid(column=0, row=3, pady=5)
+        label_windowSize.grid(column=0, row=0, pady=5)
+        label_gameSize.grid(column=0, row=1, pady=5)
+        label_difficulty.grid(column=0, row=2, pady=5)
+        label_theme.grid(column=0, row=3, pady=5)
 
-        self.combo_theme.grid(column=1, row=3)
-        self.scale_difficulty.grid(column=1, row=2)
-        self.entry_windowSize.grid(column=1, row=0)
-        self.entry_gameSize.grid(column=1, row=1)
+        combo_theme.grid(column=1, row=3)
+        scale_difficulty.grid(column=1, row=2)
+        entry_windowSize.grid(column=1, row=0)
+        entry_gameSize.grid(column=1, row=1)
 
         def save():
-            windowSize = self.entry_windowSize.get().split(", ")
+            windowSize = entry_windowSize.get().split(", ")
             windowSize[0] = int(windowSize[0])
             windowSize[1] = int(windowSize[1])
 
-            gameSize = self.entry_gameSize.get().split(", ")
+            gameSize = entry_gameSize.get().split(", ")
             gameSize[0] = int(gameSize[0])
             gameSize[1] = int(gameSize[1])
 
-            theme = self.combo_theme.get()
-            difficulty = self.sclDiff.get()
+            theme = combo_theme.get()
+            if self.difficulty == 0:
+                self.difficulty = 0.16
             self.destroy()
-            self.saveCommand(theme, difficulty, gameSize, windowSize)
+            saveCommand(theme, self.difficulty, gameSize, windowSize)
 
-        self.btnCancel = ttk.Button(
-            self.frmButtons, text="Cancel", command=self.destroy)
-        self.btnSave = ttk.Button(
-            self.frmButtons, text="Save and Exit", command=save)
-        self.btnCancel.grid(column=0, row=0)
-        self.btnSave.grid(column=1, row=0)
+        btnCancel = ttk.Button(
+            frmButtons, text="Cancel", command=self.destroy)
+        btnSave = ttk.Button(
+            frmButtons, text="Save and Exit", command=save)
+        btnCancel.grid(column=0, row=0)
+        btnSave.grid(column=1, row=0)
 
         mainloop()

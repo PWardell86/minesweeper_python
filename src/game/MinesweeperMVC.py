@@ -7,7 +7,7 @@ from Counter import Counter, Timer
 from os import path
 
 working_dir = path.dirname(path.realpath(__file__))
-resource.path = [working_dir, path.realpath('../resources')]
+resource.path = [working_dir, path.realpath('resources')]
 print(resource.path)
 
 
@@ -74,6 +74,7 @@ class Minesweeper(window.Window):
         self.cntFlags = Counter(
             2 * self.width / 3, self.height - (self.barHeight / 2), self.batch)
 
+        self.timer.locked = True
         # Contains the images for each tile value
         self.themeKey = self.getThemeKey()
 
@@ -270,7 +271,6 @@ class Minesweeper(window.Window):
         # Resets the game
         self.started = False
         self.gameOver = False
-        self.cntFlags.text = "0"
         self.tiles = []
         self.tileSize = min(
             self.width // self.gameSize[0], (self.height - self.barHeight) // self.gameSize[1])
@@ -302,8 +302,13 @@ class Minesweeper(window.Window):
         self.btnNewGame = GameButton((self.width / 2), y_offset,
                                      unpressed_img, pressed_img, button_size, button_size, self.reset, self.batch)
 
-        self.cntFlags.setCounter(0)
         self.timer.setCounter(0)
+        self.cntFlags.setCounter(0)
+        self.cntFlags.text = "0"
+        self.timer.x = self.width / 3
+        self.timer.y = self.height - (self.barHeight / 2)
+        self.cntFlags.x = 2 * self.width / 3
+        self.cntFlags.y = self.height - (self.barHeight / 2)
         self.timer.locked = True
 
         for y in range(self.gameSize[1]):
