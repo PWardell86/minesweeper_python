@@ -7,7 +7,7 @@ from Counter import Counter, Timer
 from os import path
 
 working_dir = path.dirname(path.realpath(__file__))
-resource.path = [working_dir, path.realpath('resources')]
+resource.path = [working_dir, path.realpath('../resources')]
 print(resource.path)
 
 
@@ -85,7 +85,7 @@ class Minesweeper(window.Window):
                 row.append(Tile(x * self.tileSize + self.emptySpace[0], y * self.tileSize + self.emptySpace[1],
                                 self.tileSize, self.themeKey[10],
                                 self.batch, None))
-            self.tiles += [row]
+            self.tiles.append(row)
 
     def generateTiles(self, start_x, start_y):
         self.calculateBombTiles(start_x, start_y)
@@ -126,8 +126,9 @@ class Minesweeper(window.Window):
             for x in range(self.gameSize[0]):
                 if self.tiles[y][x].value is None:
                     bombs_near = 0
+                    self.tiles[y][x].setNearTiles(self.getNearTiles(x, y))
                     # The value of each tile that isnt a bomb is equal to the number of bombs adjacent to it
-                    for near_tile in self.getNearTiles(x, y):
+                    for near_tile in self.tiles[y][x].nearTiles:
                         if near_tile.value == 9:
                             bombs_near += 1
                     self.tiles[y][x].value = bombs_near
@@ -215,7 +216,7 @@ class Minesweeper(window.Window):
         tile = self.tiles[y][x]
         if tile.isRevealed:
             flag_count = 0
-            for near_tile in self.getNearTiles(x, y):
+            for near_tile in tile.nearTiles:
                 if near_tile.isFlagged:
                     flag_count += 1
             if flag_count == tile.value:

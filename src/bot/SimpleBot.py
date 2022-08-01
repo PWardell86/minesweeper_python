@@ -30,7 +30,7 @@ class SimpleBot:
             for y in range(self.game.gameSize[1]):
                 tile = self.game.tiles[y][x]
                 if tile.isRevealed:
-                    didSomething |= self.flagNearTilesIfPossible(self.game.getNearTiles(x, y), tile)
+                    didSomething |= self.flagNearTilesIfPossible(tile.nearTiles, tile)
 
         return didSomething
 
@@ -60,7 +60,7 @@ class SimpleBot:
             for y in range(self.game.gameSize[1]):
                 tile = self.game.tiles[y][x]
                 if tile.isRevealed:
-                    didSomething |= self.revealNearTilesIfPossible(self.game.getNearTiles(x, y), tile)
+                    didSomething |= self.revealNearTilesIfPossible(tile.nearTiles, tile)
 
         return didSomething
 
