@@ -18,3 +18,7 @@ class Tile(sprite.Sprite):
                                    batch=batch, group=graphics.OrderedGroup(-1))
         # Scale the tile properly
         self.scale = size / self.width
+        self.nearTiles = []
+
+    def setNearTiles(self, tiles):
+        self.nearTiles = tiles
