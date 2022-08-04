@@ -2,14 +2,17 @@ from pyglet import sprite, graphics
 
 
 class Tile(sprite.Sprite):
-    def __init__(self, x, y, size, defaultImage, batch, value=None):
+    def __init__(self, x, y, size, index, defaultImage, batch, value=None):
         """
-        Defines a tile for the game
-            - isRevealed --> if the tile has been clicked / revealed
-            - isFlagged --> if the tile is flagged
-            - value --> what the value of the tile is: 
-                - 0 - 8 are regular values
-                - 9 is a bomb
+        Defines a tile as a sprite for minesweeper.
+        Position is relative to the top left corner
+
+        :param x: The x position of the tile, in pixels
+        :param y: The y position of the tile, in pixels
+        :param size: The size of the tile in pixels. The given image will be scaled
+        :param defaultImage: The image to give to the tile when it is generated
+        :param batch: Batch that the tile with belong to
+        :param value: The tile's value. [0-9]: blank -> bomb
         """
         self.isRevealed = False
         self.isFlagged = False
@@ -19,6 +22,18 @@ class Tile(sprite.Sprite):
         # Scale the tile properly
         self.scale = size / self.width
         self.nearTiles = []
+        self.index = index
+
+    def __str__(self):
+        output = f"Value: {self.value}, {int(self.isFlagged)}, {int(self.isRevealed)}"
+        return output
 
     def setNearTiles(self, tiles):
         self.nearTiles = tiles
+
+    def getNearFlags(self):
+        flags = 0
+        for tile in self.nearTiles:
+            if tile.isFlagged:
+                flags += 1
+        return flags
