@@ -1,5 +1,6 @@
 from src.game.MinesweeperMVC import Minesweeper
-from time import sleep
+
+from src.game.Tile import Tile
 
 
 class SimpleBot:
@@ -7,81 +8,83 @@ class SimpleBot:
         self.game = game
         # A list of methods for each special case
         # Must be methods that take no input
-        self.specialCases = [
-            self.revealAllTiles
-            , self.flagAllTiles
+        self.theseRules = [
+            self.revealAllTilesRule
+            , self.flagAllTilesRule
         ]
+        self.specialRules = self.theseRules
+
+    def testOnlyCurrentLevelRules(self):
+        self.specialRules = self.theseRules
 
     def start(self):
         self.game.startGame(self.game.gameSize[0] // 2, self.game.gameSize[1] // 2)
 
     def tick(self, t):
+        if self.game.gameOver or self.game.resetting:
+            return
         didSomething = False
-        for case in self.specialCases:
-            didSomething |= case()
-        if didSomething:
-            print("Still solving...")
-        else:
-            print("Done solving...")
+        for row in self.game.tiles:
+            for tile in row:
+                self.iterateCases(tile)
 
-    def flagAllTiles(self):
+        # if didSomething:
+        #     print("Still solving...")
+        # else:
+        #     print("Done solving...")
+
+    def iterateCases(self, tile):
         didSomething = False
-        for x in range(self.game.gameSize[0]):
-            for y in range(self.game.gameSize[1]):
-                tile = self.game.tiles[y][x]
-                if tile.isRevealed:
-                    didSomething |= self.flagNearTilesIfPossible(tile.nearTiles, tile)
+        for case in self.specialRules:
+            try:
+                didSomething |= case(tile)
+            except TypeError as e:
+                print(e)
+
+    def flagAllTilesRule(self, tile):
+        didSomething = False
+        if tile.isRevealed:
+            didSomething |= self.flagNearTilesIfPossible(tile.nearTiles, tile)
+        return didSomething
+
+    def revealAllTilesRule(self, tile: Tile):
+        didSomething = False
+        if tile.isRevealed:
+            didSomething |= self.revealNearTilesIfPossible(tile.nearTiles, tile)
 
         return didSomething
 
-    def flagNearTilesIfPossible(self, tiles: list, tile):
+    def flagNearTilesIfPossible(self, nearTiles: list, tile):
         didSomething = False
         unrevealedTiles = 0
         flaggedTiles = 0
         otherTiles = []
-        for t in tiles:
+        for t in nearTiles:
             if not t.isRevealed and not t.isFlagged:
+                otherTiles.append(t)
                 unrevealedTiles += 1
             elif t.isFlagged:
                 flaggedTiles += 1
-            else:
-                otherTiles.append(t)
+
         if unrevealedTiles == tile.value - flaggedTiles:
             for t in otherTiles:
-                ix = (t.x - self.game.emptySpace[0]) // self.game.tileSize
-                iy = (t.y - self.game.emptySpace[1]) // self.game.tileSize
-                self.game.flagTile(int(ix), int(iy))
+                self.game.flagTileFromTile(t)
                 didSomething = True
-        return didSomething
-
-    def revealAllTiles(self):
-        didSomething = False
-        for x in range(self.game.gameSize[0]):
-            for y in range(self.game.gameSize[1]):
-                tile = self.game.tiles[y][x]
-                if tile.isRevealed:
-                    didSomething |= self.revealNearTilesIfPossible(tile.nearTiles, tile)
-
         return didSomething
 
     def revealNearTilesIfPossible(self, tiles: list, tile):
         didSomething = False
         flaggedTiles = 0
-        otherTiles = []
+        unrevealedTiles = []
         for t in tiles:
             if t.isFlagged:
                 flaggedTiles += 1
-            elif t.value == 0:
-                ix = (t.x - self.game.emptySpace[0]) // self.game.tileSize
-                iy = (t.y - self.game.emptySpace[1]) // self.game.tileSize
-                self.game.revealTile(int(ix), int(iy))
-                didSomething = True
-            else:
-                otherTiles.append(t)
-        if flaggedTiles == tile.value and tile.value != 0:
-            for t in otherTiles:
-                ix = (t.x - self.game.emptySpace[0]) // self.game.tileSize
-                iy = (t.y - self.game.emptySpace[1]) // self.game.tileSize
-                self.game.revealTile(int(ix), int(iy))
+            elif not t.isRevealed:
+                unrevealedTiles.append(t)
+                # If the number of flagged tiles == the value of the tile, we know that none of the unrevealed tiles can
+                # be bombs. So we reveal them
+        if flaggedTiles == tile.value:
+            for t in unrevealedTiles:
+                self.game.revealTileFromTile(t)
                 didSomething = True
         return didSomething

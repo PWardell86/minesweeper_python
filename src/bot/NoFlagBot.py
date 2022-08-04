@@ -1,0 +1,2 @@
+class NoFlagBot:
+    pass
