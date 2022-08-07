@@ -21,7 +21,7 @@ class SimpleBot:
         self.game.startGame(self.game.gameSize[0] // 2, self.game.gameSize[1] // 2)
 
     def tick(self, t):
-        if self.game.gameOver or self.game.resetting:
+        if self.game.gameOver:
             return
         didSomething = False
         for row in self.game.tiles:

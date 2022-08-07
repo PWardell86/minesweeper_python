@@ -1,7 +1,5 @@
 from random import randint
-
 from pyglet import resource
-
 from src.game.Tile import Tile
 TEST_PATH = "utils/resources/testBlank.png"
 TEST_IMAGE = resource.image(TEST_PATH)
@@ -9,9 +7,9 @@ TEST_IMAGE = resource.image(TEST_PATH)
 
 def generateDummyTiles(rows: int, columns: int):
     dummyTiles = []
-    for rowIndex in range(rows):
+    for _ in range(rows):
         row = []
-        for columnIndex in range(columns):
+        for _ in range(columns):
             row.append(Tile(0, 0, 0, TEST_IMAGE, None, None))
         dummyTiles.append(row)
     return dummyTiles
@@ -19,9 +17,9 @@ def generateDummyTiles(rows: int, columns: int):
 
 def generateRandomTiles(rows: int, columns: int):
     randomTiles = []
-    for rowIndex in range(rows):
+    for _ in range(rows):
         row = []
-        for columnIndex in range(columns):
+        for _ in range(columns):
             row.append(Tile(0, 0, 0, TEST_IMAGE, None, randint(0, 9)))
         randomTiles.append(row)
     return randomTiles

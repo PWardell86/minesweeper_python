@@ -1,4 +1,4 @@
-from tkinter import DoubleVar, StringVar, ttk, Tk, mainloop
+from tkinter import StringVar, ttk, Tk, mainloop
 from os import listdir
 
 
@@ -7,7 +7,7 @@ class SettingsWindow(Tk):
         super(SettingsWindow,self) .__init__("Settings", f"{width}x{height}")
         self.wm_attributes("-toolwindow", True)
         self.title(name)
-        path = "../resources"
+        path = "resources"
         themes = listdir(path)
         frmButtons = ttk.Frame(self)
         frmButtons.grid(column=0, row=1)

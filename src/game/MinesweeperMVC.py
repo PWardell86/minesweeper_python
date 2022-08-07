@@ -1,15 +1,14 @@
 from pyglet import *
 from random import random
 from os import path
-
+import sys
 from src.game.Counter import Timer, Counter
 from src.game.GameButton import GameButton
 from src.game.SettingsWindow import SettingsWindow
 from src.game.Tile import Tile
 
 working_dir = path.dirname(path.realpath(__file__))
-resource.path = [working_dir, path.realpath('../resources')]
-print(resource.path)
+resource.path += [sys.path[0], sys.path[0] + "/resources"]
 
 
 def getButtonSize(h):
@@ -36,7 +35,6 @@ class Minesweeper(window.Window):
         self.started = False
         self.gameOver = False
         self.dragging = False
-        self.resetting = False
 
 
         # Initialize the top bar, and counters for timer and flags
@@ -273,11 +271,6 @@ class Minesweeper(window.Window):
         self.reset()
 
     def reset(self):
-        self.resetting = True
-        self.resetGame()
-        self.resetting = False
-
-    def resetGame(self):
         """
         Resets the game to its initial state with all class variables
         """
