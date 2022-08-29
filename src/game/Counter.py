@@ -7,7 +7,7 @@ class Counter(text.Label):
             str(initial),
             font_name=font, font_size=fontSize, color=colour,
             anchor_x="center", anchor_y="center", x=x, y=y,
-            batch=batch, group=graphics.OrderedGroup(2))  # Move it to the top so it can always be seen
+            batch=batch, group=graphics.OrderedGroup(2))  # Move it to the top, so it can always be seen
         self.locked = False
         self.count = initial
 
@@ -31,6 +31,10 @@ class Counter(text.Label):
 
 
 class Timer(Counter):
+    """
+    This time will be locked by default, but when unlocked it will count up on its own, once per second.
+    There is no need to control it manually
+    """
     def __init__(self, x, y, batch, initial=0, font="Joystix Monospace", fontSize=20, color=(0, 200, 0, 255)):
         super(Timer, self).__init__(x, y, batch, initial, font, fontSize, color)
         clock.schedule_interval(lambda t: self.plus(), 1)

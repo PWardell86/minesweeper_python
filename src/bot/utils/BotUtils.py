@@ -1,9 +1,9 @@
 from src.bot.IntermediateBot import IntermediateBot
 from src.bot.SimpleBot import SimpleBot
-from src.game.MinesweeperMVC import Minesweeper
+from src.game import MinesweeperModelControl
 
 
-def playWithBot(level: int, game: Minesweeper, clock, interval, testChanges=False):
+def playWithBot(level: int, game: MinesweeperModelControl, clock, interval, testChanges=False):
     bot = None
     if level == 0:
         return

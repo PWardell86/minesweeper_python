@@ -66,7 +66,7 @@ class MinesweeperV(window.Window):
 
         self.timer = Timer(
             self.width / 3, self.height - (self.barHeight / 2), self.batch)
-
+        self.timer.locked = True
         self.cntFlags = Counter(
             2 * self.width / 3, self.height - (self.barHeight / 2), self.batch)
 
@@ -100,14 +100,17 @@ class MinesweeperV(window.Window):
                 if not refTile.updated:
                     if refTile.flagged:
                         tile.image = self.getThemeKey()[-1]
-                    elif refTile.revealed:
-                        tile.image = self.getThemeKey()[refTile.value]
+                    else:
+                        tile.image = self.getThemeKey()[10]
+                        if refTile.revealed:
+                            tile.image = self.getThemeKey()[refTile.value]
                     refTile.updated = True
         self.cntFlags.setCounter(flags)
-        if self.minesweeperControl.started:
-            if time() - self.prevTime > 1000:
-                self.timer.plus()
-                self.prevTime = time()
+
+        if not self.minesweeperControl.gameOver:
+            self.timer.locked = not self.minesweeperControl.started
+        else:
+            self.timer.locked = True
 
 
     def getThemeKey(self):
@@ -219,6 +222,7 @@ class MinesweeperV(window.Window):
             # Place a flag on the tile if key 4 is pressed (right click)
             if button == 4:
                 self.minesweeperControl.clickEvent(x_pos, y_pos, True)
+                print(self.minesweeperControl.tiles.getTileAtCoord(x_pos, y_pos).flagged)
             elif button == 1:  # Reveal the tile if key 1 is pressed (left click)
                 self.minesweeperControl.clickEvent(x_pos, y_pos, False)
         self.update()
