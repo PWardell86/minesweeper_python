@@ -1,5 +1,7 @@
 from random import randint
 from pyglet import resource
+
+from src.game.ControlTile import ControlTile
 from src.game.TileSprite import TileSprite
 TEST_PATH = "utils/resources/testBlank.png"
 TEST_IMAGE = resource.image(TEST_PATH)
@@ -25,10 +27,10 @@ class TileSet(list):
 
 def generateDummyTiles(rows: int, columns: int):
     dummyTiles = []
-    for _ in range(rows):
+    for y in range(rows):
         row = []
-        for _ in range(columns):
-            row.append(TileSprite(None, 0, TEST_IMAGE, None))
+        for x in range(columns):
+            row.append(ControlTile(x, y, 0))
         dummyTiles.append(row)
     return dummyTiles
 
