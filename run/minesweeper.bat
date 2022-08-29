@@ -1,2 +1,1 @@
-echo off
-python minesweeper_python/src/game/Main.py
+python src/game/Main.py
