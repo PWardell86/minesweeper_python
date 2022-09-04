@@ -1,5 +1,4 @@
-from src.bot.Bot import Bot
-from src.game import MinesweeperModelControl
+from src.main.bot.Bot import Bot
 
 
 class SimpleBot(Bot):
@@ -49,5 +48,4 @@ class SimpleBot(Bot):
                 # be bombs. So we reveal them
         if flaggedTiles == tile.value:
             for t in unrevealedTiles:
-                self.game.revealTile(t.x, t.y)
-                self.didSomething = True
+                self.didSomething |= self.game.revealTile(t.x, t.y)

@@ -1,20 +1,18 @@
-from pyglet import *
+from pyglet import window, resource, sprite, graphics
 from os import path
 import sys
-from time import time
 
-from src.game.ControlTile import ControlTile
-from src.game.utils.Logger import Logger
+from src.main.game.ControlTile import ControlTile
 
 working_dir = path.dirname(path.realpath(__file__))
 resource.path += [sys.path[0], sys.path[0] + "\\resources"]
 print(resource.path)
 
-from src.game.Counter import Timer, Counter
-from src.game.GameButton import GameButton
-from src.game.MinesweeperModelControl import MinesweeperMC
-from src.game.SettingsWindow import SettingsWindow
-from src.game.TileSprite import TileSprite
+from src.main.components.Counter import Timer, Counter
+from src.main.components.GameButton import GameButton
+from src.main.game.MinesweeperModelControl import MinesweeperMC
+from src.main.components.ConfigurationWindow import SettingsWindow
+from src.main.game.TileSprite import TileSprite
 
 
 
@@ -49,7 +47,7 @@ class MinesweeperV(window.Window):
              (gameSize[1] * self.tileSize)) / 2
         ]
 
-        # Initialize the buttons for a new game and settings
+        # Initialize the buttons for a new main and settings
         pressed_img = resource.image(f"{self.themeDir}/settings0.png")
         unpressed_img = resource.image(f"{self.themeDir}/settings1.png")
         btn_size = getButtonSize(self.barHeight)
@@ -73,7 +71,7 @@ class MinesweeperV(window.Window):
         # Contains the images for each tile value
         self.themeKey = self.getThemeKey()
 
-        # Generate unrevealed tiles with no other values as a placeholder until the game is started
+        # Generate unrevealed tiles with no other values as a placeholder until the main is started
         for y in range(gameSize[1]):
             row = []
             for x in range(gameSize[0]):
@@ -84,9 +82,9 @@ class MinesweeperV(window.Window):
 
     def setTheme(self, name):
         """
-        Updates the theme of the game to the given folder, name
+        Updates the theme of the main to the given folder, name
         """
-        # Set the theme of the game theme folder
+        # Set the theme of the main theme folder
         self.themeDir = name
         self.themeKey = self.getThemeKey()
 
@@ -100,10 +98,11 @@ class MinesweeperV(window.Window):
                 if not refTile.updated:
                     if refTile.flagged:
                         tile.image = self.getThemeKey()[-1]
-                    else:
-                        tile.image = self.getThemeKey()[10]
+                    else: 
                         if refTile.revealed:
                             tile.image = self.getThemeKey()[refTile.value]
+                        else: 
+                            tile.image = self.getThemeKey()[10]
                     refTile.updated = True
         self.cntFlags.setCounter(flags)
 
@@ -141,9 +140,9 @@ class MinesweeperV(window.Window):
 
     def reset(self):
         """
-        Resets the game to its initial state with all class variables
+        Resets the main to its initial state with all class variables
         """
-        # Resets the game
+        # Resets the main
 
         for row in self.tiles:
             for tile in row:
@@ -165,7 +164,7 @@ class MinesweeperV(window.Window):
         self.sprtTopBar.y = self.height - self.barHeight
         self.sprtTopBar.scale_x = self.width / self.sprtTopBar.width
 
-        # Initialize the buttons for a new game and settings
+        # Initialize the buttons for a new main and settings
         pressed_img = resource.image(f"{self.themeDir}/settings0.png")
         unpressed_img = resource.image(f"{self.themeDir}/settings1.png")
         button_size = getButtonSize(self.barHeight)

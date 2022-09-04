@@ -1,6 +1,7 @@
-from src.bot.IntermediateBot import IntermediateBot
-from src.bot.SimpleBot import SimpleBot
-from src.game import MinesweeperModelControl
+from src.main.bot.IntermediateBot import IntermediateBot
+from src.main.bot.SimpleBot import SimpleBot
+from src.main.bot.SuperiorBot import SuperiorBot
+from src.main.game import MinesweeperModelControl
 
 
 def playWithBot(level: int, game: MinesweeperModelControl, clock, interval, testChanges=False):
@@ -11,10 +12,13 @@ def playWithBot(level: int, game: MinesweeperModelControl, clock, interval, test
         bot = SimpleBot(game)
     elif level == 2:
         bot = IntermediateBot(game)
+    elif level == 3:
+        bot = SuperiorBot(game)
 
     if bot is not None:
         if testChanges:
             bot.testOnlyCurrentLevelRules()
+            print(bot.allRules)
         bot.start()
         if interval is None:
             clock.schedule(bot.tick)

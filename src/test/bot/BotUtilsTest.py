@@ -1,5 +1,5 @@
 import unittest
-from src.game.utils import TileUtils
+from src.main.utils import TileUtils
 
 
 class MyTestCase(unittest.TestCase):
