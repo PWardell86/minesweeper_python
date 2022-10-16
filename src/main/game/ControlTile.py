@@ -24,7 +24,7 @@ class ControlTile:
         return flags
 
     def __str__(self):
-        output = f"Value: ({self.x}, {self.y}), V: {self.value}, F: {self.flagged}, R: {self.revealed}"
+        output = f"({self.x}, {self.y}), V: {self.value}, F: {self.flagged}, R: {self.revealed}"
         return output
 
     def markToUpdate(self):

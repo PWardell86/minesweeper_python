@@ -1,10 +1,9 @@
-import src.bot.SimpleBot
-from src.game.MinesweeperVisual import MinesweeperV
-from src.game.utils import TileUtils
+import src.main.bot.SimpleBot
+from src.main.utils import TileUtils
 
 
-class IntermediateBot(src.bot.SimpleBot.SimpleBot):
-    def __init__(self, game: MinesweeperV):
+class IntermediateBot(src.main.bot.SimpleBot.SimpleBot):
+    def __init__(self, game):
         super(IntermediateBot, self).__init__(game)
         self.theseRules = [
             self.twoNearOneRule,
@@ -28,8 +27,7 @@ class IntermediateBot(src.bot.SimpleBot.SimpleBot):
 
                     if nearTile.value - nearTile.getNearFlags() - certainNearBombs == 0:
                         for revealTile in TileUtils.getNonCommonTiles(nearTile.nearTiles, tile.nearTiles, True):
-                            self.game.revealTile(revealTile.x, revealTile.y)
-                            self.didSomething = True
+                            self.didSomething |= self.game.revealTile(revealTile.x, revealTile.y)
                         break
 
     def checkAndRevealTwoOneCase(self, tile, nearTiles: list):
@@ -49,7 +47,7 @@ class IntermediateBot(src.bot.SimpleBot.SimpleBot):
                         onlyNearOneValue = TileUtils.getNonCommonTiles(checkTile.nearTiles, nearTiles, True)
                         for revealTile in onlyNearOneValue:
                             if not revealTile.flagged:
-                                self.game.revealTile(revealTile.x, revealTile.y)
+                                self.didSomething |= self.game.revealTile(revealTile.x, revealTile.y)
                         # Once we have placed flags and revealed tiles we have to stop because our previous data is now
                         # bad
                         break

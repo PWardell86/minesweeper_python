@@ -18,3 +18,5 @@ Click the lef-most button in the top bar to change the settings
  - You can select different themes as long as there are others in src/resources
 
 
+### Bots
+In Main.py you can change which bot you want to play with. Levels 1-3

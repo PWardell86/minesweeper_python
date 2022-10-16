@@ -4,15 +4,13 @@ import sys
 
 
 class SettingsWindow(Tk):
-    def __init__(self,  saveCommand, width=250, height=300, name="Settings"):
-        super(SettingsWindow,self) .__init__("Settings", f"{width}x{height}")
+    def __init__(self,  saveCommand, width=250, height=300):
+        super(SettingsWindow,self) .__init__("Game Configuration", f"{width}x{height}")
         self.wm_attributes("-toolwindow", True)
-        self.title(name)
         self.saveCommand = saveCommand
         self.difficulty = 0.16
 
-        path = "../resources"
-        print(sys.path)
+        path = "../../resources"
         themes = listdir(path)
         frm_buttons = ttk.Frame(self)
         frm_buttons.grid(column=0, row=1)

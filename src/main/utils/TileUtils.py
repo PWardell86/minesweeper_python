@@ -1,9 +1,8 @@
-from random import randint
 from pyglet import resource
 
-from src.game.ControlTile import ControlTile
-from src.game.TileSprite import TileSprite
-TEST_PATH = "utils/resources/testBlank.png"
+from src.main.game.ControlTile import ControlTile
+
+TEST_PATH = "main/utils/resources/testBlank.png"
 TEST_IMAGE = resource.image(TEST_PATH)
 
 
@@ -123,13 +122,13 @@ def getUnflagged(tiles, checkRevealed=False):
 
 
 def getUnrevealed(tiles, checkFlagged=False):
-    notFlagged = []
+    unrevealed = []
     for tile in tiles:
         if not tile.revealed:
             if checkFlagged:
                 if not tile.flagged:
-                    notFlagged.append(tile)
+                    unrevealed.append(tile)
             else:
-                notFlagged.append(tile)
-    return notFlagged
+                unrevealed.append(tile)
+    return unrevealed
 

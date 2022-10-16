@@ -1,7 +1,6 @@
-import difflib
 from random import random
-from src.game.ControlTile import ControlTile
-from src.game.utils.TileUtils import TileSet
+from src.main.game.ControlTile import ControlTile
+from src.main.utils.TileUtils import TileSet
 
 DEFAULT_DIFF = 0.16
 DEFAULT_SIZE = (20, 15)
@@ -15,15 +14,16 @@ class MinesweeperMC:
         self.started = False
         self.gameOver = False
 
-        # Generate unrevealed tiles with no other values as a placeholder until the game is started
+        # Generate unrevealed tiles with no other values as a placeholder until the main is started
         for y in range(self.gameSize[1]):
             row = []
             for x in range(self.gameSize[0]):
                 row.append(ControlTile(x, y, y * self.gameSize[0] + x))
             self.tiles.append(row)
 
+
     def clickEvent(self, x, y, flag):
-        if self.started:
+        if self.started and not self.gameOver:
             if flag:
                 self.flagTile(x, y)
             else:
@@ -38,7 +38,7 @@ class MinesweeperMC:
         self.started = False
         self.gameOver = False
 
-        # Generate unrevealed tiles with no other values as a placeholder until the game is started
+        # Generate unrevealed tiles with no other values as a placeholder until the main is started
         for y in range(self.gameSize[1]):
             row = []
             for x in range(self.gameSize[0]):
@@ -49,19 +49,23 @@ class MinesweeperMC:
         tile = self.tiles.getTileAtCoord(x, y)
         if not (tile.flagged or tile.revealed):
             tile.revealed = True
+            tile.updated = False
             if tile.value == 0:
-                self.revealAllNearTiles(x, y)
-            elif tile.value == 9:
+                return self.revealAllNearTiles(x, y)
+            if tile.value == 9:
                 self.endGame()
+                return False
         elif not tile.flagged and tile.revealed:
-            self.autoClearNearTiles(x, y)
+            tile.updated = False
+            return self.autoClearNearTiles(x, y)
 
-        tile.updated = False
+        return False
 
     def flagTile(self, x, y):
         tile = self.tiles.getTileAtCoord(x, y)
-        tile.flagged = not tile.flagged
-        tile.updated = False
+        if not tile.revealed:
+            tile.flagged = not tile.flagged
+            tile.updated = False
 
     def generateBombs(self, start_x, start_y):
         self.tiles = TileSet()
@@ -73,7 +77,7 @@ class MinesweeperMC:
             row = []
             for x in range(self.gameSize[0]):
                 # Do not place any bombs within a radius of one of the clicked position
-                # This is done so the start of the game is easier
+                # This is done so the start of the main is easier
                 dx = abs(start_x - x)
                 dy = abs(start_y - y)
                 value = None
@@ -122,8 +126,10 @@ class MinesweeperMC:
         self.revealTile(x, y)
 
     def revealAllNearTiles(self, x, y):
+        output = False
         for tile in self.tiles.getTileAtCoord(x, y).nearTiles:
-            self.revealTile(tile.x, tile.y)
+            output |= self.revealTile(tile.x, tile.y)
+        return output
 
     def getNearTiles(self, x, y):
         near_tiles = []
@@ -135,11 +141,13 @@ class MinesweeperMC:
         return near_tiles
 
     def autoClearNearTiles(self, x, y):
+        output = False
         tile = self.tiles.getTileAtCoord(x, y)
         if tile.revealed and tile.getNearFlags() == tile.value:
             for nt in tile.nearTiles:
                 if not nt.revealed:
-                    self.revealTile(nt.x, nt.y)
+                    output |= self.revealTile(nt.x, nt.y)
+        return output
 
     def pretty(self):
         output = ""
