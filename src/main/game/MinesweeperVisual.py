@@ -9,11 +9,10 @@ resource.path += [sys.path[0], sys.path[0] + "\\resources"]
 print(resource.path)
 
 from src.main.components.Counter import Timer, Counter
-from src.main.components.GameButton import GameButton
+from src.main.components.MSButton import Button
 from src.main.game.MinesweeperModelControl import MinesweeperMC
 from src.main.components.ConfigurationWindow import SettingsWindow
 from src.main.game.TileSprite import TileSprite
-
 
 
 def getButtonSize(h):
@@ -53,14 +52,14 @@ class MinesweeperV(window.Window):
         btn_size = getButtonSize(self.barHeight)
         y_offset = (self.height - self.barHeight / 2) - btn_size / 2
 
-        self.btnSettings = GameButton(self.width / 2 - (btn_size + 4), y_offset,
-                                      unpressed_img, pressed_img, btn_size, btn_size,
-                                      self.batch, lambda: SettingsWindow(self.save))
+        self.btnSettings = Button(self.width / 2 - (btn_size + 4), y_offset,
+                                  unpressed_img, pressed_img, btn_size, btn_size,
+                                  self.batch, lambda: SettingsWindow(self.save))
 
         pressed_img = resource.image(f"{self.themeDir}/newGame0.png")
         unpressed_img = resource.image(f"{self.themeDir}/newGame1.png")
-        self.btnNewGame = GameButton((self.width / 2), y_offset,
-                                     unpressed_img, pressed_img, btn_size, btn_size, self.batch, self.reset)
+        self.btnNewGame = Button((self.width / 2), y_offset,
+                                 unpressed_img, pressed_img, btn_size, btn_size, self.batch, self.reset)
 
         self.timer = Timer(
             self.width / 3, self.height - (self.barHeight / 2), self.batch)
@@ -77,7 +76,7 @@ class MinesweeperV(window.Window):
             for x in range(gameSize[0]):
                 x_pos = x * self.tileSize + self.emptySpace[0]
                 y_pos = y * self.tileSize + self.emptySpace[1]
-                row.append(TileSprite(None, x_pos, y_pos, self.tileSize, self.themeKey[10], self.batch))
+                row.append(TileSprite(x_pos, y_pos, self.tileSize, self.themeKey[10], self.batch))
             self.tiles.append(row)
 
     def setTheme(self, name):
@@ -170,14 +169,14 @@ class MinesweeperV(window.Window):
         button_size = getButtonSize(self.barHeight)
         y_offset = (self.height - self.barHeight / 2) - button_size / 2
 
-        self.btnSettings = GameButton(self.width / 2 - (button_size + 4), y_offset,
-                                      unpressed_img, pressed_img, button_size, button_size,
-                                      self.batch, lambda: SettingsWindow(self.save))
+        self.btnSettings = Button(self.width / 2 - (button_size + 4), y_offset,
+                                  unpressed_img, pressed_img, button_size, button_size,
+                                  self.batch, lambda: SettingsWindow(self.save))
 
         pressed_img = resource.image(f"{self.themeDir}/newGame0.png")
         unpressed_img = resource.image(f"{self.themeDir}/newGame1.png")
-        self.btnNewGame = GameButton((self.width / 2), y_offset,
-                                     unpressed_img, pressed_img, button_size, button_size, self.batch, self.reset)
+        self.btnNewGame = Button((self.width / 2), y_offset,
+                                 unpressed_img, pressed_img, button_size, button_size, self.batch, self.reset)
 
         self.timer.setCounter(0)
         self.cntFlags.setCounter(0)
@@ -187,11 +186,12 @@ class MinesweeperV(window.Window):
         self.cntFlags.x = 2 * self.width / 3
         self.cntFlags.y = self.height - (self.barHeight / 2)
 
-        for x in range(self.minesweeperControl.gameSize[0]):
+        for y in range(self.minesweeperControl.gameSize[1]):
             row = []
-            for y in range(self.minesweeperControl.gameSize[1]):
-                row.append(TileSprite(ControlTile(x * self.tileSize + self.emptySpace[0], y * self.tileSize + self.emptySpace[1], 0),
-                                      self.tileSize, self.themeKey[10], self.batch))
+            for x in range(self.minesweeperControl.gameSize[0]):
+                x_pos = x * self.tileSize + self.emptySpace[0]
+                y_pos = y * self.tileSize + self.emptySpace[1]
+                row.append(TileSprite(x_pos, y_pos, self.tileSize, self.themeKey[10], self.batch))
             self.tiles.append(row)
         self.batch.invalidate()
 
@@ -221,7 +221,6 @@ class MinesweeperV(window.Window):
             # Place a flag on the tile if key 4 is pressed (right click)
             if button == 4:
                 self.minesweeperControl.clickEvent(x_pos, y_pos, True)
-                print(self.minesweeperControl.tiles.getTileAtCoord(x_pos, y_pos).flagged)
             elif button == 1:  # Reveal the tile if key 1 is pressed (left click)
                 self.minesweeperControl.clickEvent(x_pos, y_pos, False)
         self.update()

@@ -3,17 +3,18 @@ from src.main.bot.SimpleBot import SimpleBot
 from src.main.bot.SuperiorBot import SuperiorBot
 from src.main.game import MinesweeperModelControl
 
+NUMBER_OF_BOTS = 3
+BOTS = {1: SimpleBot,
+        2: IntermediateBot,
+        3: SuperiorBot
+        }
+
 
 def playWithBot(level: int, game: MinesweeperModelControl, clock, interval, testChanges=False):
-    bot = None
-    if level == 0:
-        return
-    if level == 1:
-        bot = SimpleBot(game)
-    elif level == 2:
-        bot = IntermediateBot(game)
-    elif level == 3:
-        bot = SuperiorBot(game)
+    try:
+        bot = BOTS[level](game)
+    except KeyError:
+        bot = None
 
     if bot is not None:
         if testChanges:

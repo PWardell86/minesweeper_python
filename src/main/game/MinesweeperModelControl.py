@@ -21,8 +21,9 @@ class MinesweeperMC:
                 row.append(ControlTile(x, y, y * self.gameSize[0] + x))
             self.tiles.append(row)
 
+
     def clickEvent(self, x, y, flag):
-        if self.started:
+        if self.started and not self.gameOver:
             if flag:
                 self.flagTile(x, y)
             else:
@@ -48,21 +49,23 @@ class MinesweeperMC:
         tile = self.tiles.getTileAtCoord(x, y)
         if not (tile.flagged or tile.revealed):
             tile.revealed = True
+            tile.updated = False
             if tile.value == 0:
                 return self.revealAllNearTiles(x, y)
             if tile.value == 9:
                 self.endGame()
                 return False
         elif not tile.flagged and tile.revealed:
+            tile.updated = False
             return self.autoClearNearTiles(x, y)
 
-        tile.updated = False
         return False
 
     def flagTile(self, x, y):
         tile = self.tiles.getTileAtCoord(x, y)
-        tile.flagged = not tile.flagged
-        tile.updated = False
+        if not tile.revealed:
+            tile.flagged = not tile.flagged
+            tile.updated = False
 
     def generateBombs(self, start_x, start_y):
         self.tiles = TileSet()
