@@ -1,14 +1,7 @@
-import os
-import sys
-
-splitPath = os.path.abspath(__file__).split("\\")
-splitPath = splitPath[:len(splitPath) - 3]
-rootPath = str.join("\\", splitPath)
-sys.path.insert(0, rootPath)
-
+from pyglet import app, gl, clock
 from src.main.game.MinesweeperVisual import MinesweeperV
 from src.main.bot.utils import BotUtils
-from pyglet import app, gl, clock
+
 
 BOT_LEVEL = 0
 

@@ -1,12 +1,4 @@
 from pyglet import window, resource, sprite, graphics
-from os import path
-import sys
-
-from src.main.game.ControlTile import ControlTile
-
-working_dir = path.dirname(path.realpath(__file__))
-resource.path += [sys.path[0], sys.path[0] + "\\resources"]
-print(resource.path)
 
 from src.main.components.Counter import Timer, Counter
 from src.main.components.MSButton import Button
@@ -27,10 +19,10 @@ class MinesweeperV(window.Window):
         self.minesweeperControl = MinesweeperMC(gameSize, difficulty)
         self.themeDir = theme
         self.batch = graphics.Batch()
-
         self.tiles = []
         self.dragging = False
         self.prevTime = 0
+        self.fps_display = window.FPSDisplay(window=self)
 
         # Initialize the top bar, and counters for timer and flags
         self.sprtTopBar = sprite.Sprite(resource.image(
@@ -110,7 +102,6 @@ class MinesweeperV(window.Window):
         else:
             self.timer.locked = True
 
-
     def getThemeKey(self):
         d = {-1: "flag.png",
              0: "none.png",
@@ -148,7 +139,6 @@ class MinesweeperV(window.Window):
                 tile.delete()
         self.tiles = []
         self.minesweeperControl.reset()
-        self.time = 0
 
         self.tileSize = min(
             self.width // self.minesweeperControl.gameSize[0], (self.height - self.barHeight) // self.minesweeperControl.gameSize[1])
@@ -205,6 +195,7 @@ class MinesweeperV(window.Window):
     def on_draw(self):
         self.clear()
         self.batch.draw()
+        self.fps_display.draw()
 
     def on_mouse_release(self, x, y, button, modifiers):
         if self.dragging:
