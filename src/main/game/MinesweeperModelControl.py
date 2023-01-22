@@ -113,6 +113,7 @@ class MinesweeperMC:
 
     def endGame(self):
         self.gameOver = True
+
         def f(tile):
             if tile.value == 9:
                 tile.revealed = True

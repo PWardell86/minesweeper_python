@@ -12,7 +12,7 @@ def getButtonSize(h):
 
 
 class MinesweeperV(window.Window):
-    def __init__(self, theme="Default", difficulty=0.25, gameSize=(10, 10), windowSize=(500, 500)):
+    def __init__(self, theme="Minecraft (WIP)", difficulty=0.25, gameSize=(10, 10), windowSize=(500, 500)):
         super(MinesweeperV, self).__init__(
             windowSize[0], windowSize[1], caption="Minesweeper")
 
@@ -128,6 +128,31 @@ class MinesweeperV(window.Window):
         self.height = windowSize[1]
         self.reset()
 
+    def zoom(self, x, y, amount):
+        xIndex = (x - self.emptySpace[0])
+        yIndex = (y - self.emptySpace[1])
+
+        # Move the tile in the bottom_corner and build all tiles off of that
+        tile = self.tiles[0][0]
+
+        oldSize = self.tileSize
+        tile.scale += amount
+        currentSize = self.tiles[0][0].width
+        sizeDifference = oldSize - currentSize
+
+        tile.y += sizeDifference * (yIndex - tile.y) // currentSize
+        tile.x += sizeDifference * (xIndex - tile.x) // currentSize
+
+        for index1, row in enumerate(self.tiles):
+            for index2, t in enumerate(row):
+                if index1 == 0 and index2 == 0:
+                    continue
+                t.scale += amount
+                t.y = index1 * currentSize + tile.y
+                t.x = index2 * currentSize + tile.x
+        self.tileSize = self.tiles[0][0].width
+        self.update_empty_space()
+
     def reset(self):
         """
         Resets the main to its initial state with all class variables
@@ -230,30 +255,10 @@ class MinesweeperV(window.Window):
 
     def on_mouse_scroll(self, x, y, dx, dy):
         # There is never a time when we want to scale tiles differently, so...
-        newScale = dy * 0.05
-        xIndex = (x - self.emptySpace[0])
-        yIndex = (y - self.emptySpace[1])
-
-        # Move the tile in the bottom_corner and build all tiles off of that
-        tile = self.tiles[0][0]
-
-        oldSize = self.tileSize
-        tile.scale += newScale
-        currentSize = self.tiles[0][0].width
-        sizeDifference = oldSize - currentSize
-
-        tile.y += sizeDifference * (yIndex - tile.y) / currentSize
-        tile.x += sizeDifference * (xIndex - tile.x) / currentSize
-
-        for index1, row in enumerate(self.tiles):
-            for index2, t in enumerate(row):
-                if index1 == 0 and index2 == 0:
-                    continue
-                t.scale += newScale
-                t.y = index1 * currentSize + tile.y
-                t.x = index2 * currentSize + tile.x
-        self.tileSize = self.tiles[0][0].width
-        self.update_empty_space()
+        newScale = dy * self.tileSize / 200
+        # print(dy)
+        print(self.tileSize)
+        self.zoom(x, y, newScale)
 
     def update_empty_space(self):
         cornerTile = self.tiles[0][0]

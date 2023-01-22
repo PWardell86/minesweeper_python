@@ -5,7 +5,8 @@ Run Main.py to begin. Initial configuration can be changed within Main.py. Most 
 want to change can be changed within the game once it is started.
 
 ### Running the game
-You must run the game from the root of the project or else it will not work. Check out the batch file in *run/* to do it for you.
+You must run the game from the root of the project or else it will not work. \
+Check out the batch file in **run/** to do it for you.
 ### Instructions
 
 Click anywhere in the game to start \

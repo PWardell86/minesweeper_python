@@ -10,7 +10,7 @@ class SettingsWindow(Tk):
         self.saveCommand = saveCommand
         self.difficulty = 0.16
 
-        path = "../../resources"
+        path = "../../themes"
         themes = listdir(path)
         frm_buttons = ttk.Frame(self)
         frm_buttons.grid(column=0, row=1)

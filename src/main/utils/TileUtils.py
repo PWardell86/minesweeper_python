@@ -2,7 +2,7 @@ from pyglet import resource
 
 from src.main.game.ControlTile import ControlTile
 
-TEST_PATH = "main/utils/resources/testBlank.png"
+TEST_PATH = "main/utils/themes/testBlank.png"
 TEST_IMAGE = resource.image(TEST_PATH)
 
 
