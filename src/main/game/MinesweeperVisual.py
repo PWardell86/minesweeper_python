@@ -3,7 +3,7 @@ from pyglet import window, resource, sprite, graphics
 from src.main.components.Counter import Timer, Counter
 from src.main.components.MSButton import Button
 from src.main.game.MinesweeperModelControl import MinesweeperMC
-from src.main.components.ConfigurationWindow import SettingsWindow
+from src.main.components.ConfigurationWindow import ConfigWindow
 from src.main.game.TileSprite import TileSprite
 
 
@@ -12,7 +12,7 @@ def getButtonSize(h):
 
 
 class MinesweeperV(window.Window):
-    def __init__(self, theme="Minecraft (WIP)", difficulty=0.25, gameSize=(10, 10), windowSize=(500, 500)):
+    def __init__(self, theme="Default", difficulty=0.25, gameSize=(10, 10), windowSize=(500, 500)):
         super(MinesweeperV, self).__init__(
             windowSize[0], windowSize[1], caption="Minesweeper")
 
@@ -46,7 +46,7 @@ class MinesweeperV(window.Window):
 
         self.btnSettings = Button(self.width / 2 - (btn_size + 4), y_offset,
                                   unpressed_img, pressed_img, btn_size, btn_size,
-                                  self.batch, lambda: SettingsWindow(self.save))
+                                  self.batch, lambda: ConfigWindow(self.save))
 
         pressed_img = resource.image(f"{self.themeDir}/newGame0.png")
         unpressed_img = resource.image(f"{self.themeDir}/newGame1.png")
@@ -186,7 +186,7 @@ class MinesweeperV(window.Window):
 
         self.btnSettings = Button(self.width / 2 - (button_size + 4), y_offset,
                                   unpressed_img, pressed_img, button_size, button_size,
-                                  self.batch, lambda: SettingsWindow(self.save))
+                                  self.batch, lambda: ConfigWindow(self.save))
 
         pressed_img = resource.image(f"{self.themeDir}/newGame0.png")
         unpressed_img = resource.image(f"{self.themeDir}/newGame1.png")
