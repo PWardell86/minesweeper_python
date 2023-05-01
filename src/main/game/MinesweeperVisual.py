@@ -260,7 +260,6 @@ class MinesweeperV(window.Window):
         self.dragging = True
         x0, y0 = self.tiles[0][0].x, self.tiles[0][0].y
 
-
         if x0 >= 0 and dx > 0:
             mx = 0
             self.move_tiles_abs(0, y0)
