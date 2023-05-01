@@ -19,7 +19,7 @@ class MinesweeperV(window.Window):
         self.minesweeperControl = MinesweeperMC(gameSize, difficulty)
         self.themeDir = theme
         self.batch = graphics.Batch()
-        self.tiles = []
+        self.tiles = []  # A 2D list indexed by (y, x)
         self.dragging = False
         self.prevTime = 0
         self.fps_display = window.FPSDisplay(window=self)
@@ -32,6 +32,8 @@ class MinesweeperV(window.Window):
         self.sprtTopBar.scale_x = self.width / self.sprtTopBar.width
 
         self.tileSize = min(windowSize[0] // gameSize[0], (windowSize[1] - self.barHeight) // gameSize[1])
+        self.zoom_minmax = [0, self.tileSize]
+
         self.emptySpace = [
             (self.width - (gameSize[0] * self.tileSize)) / 2,
             (self.height - self.barHeight -
@@ -70,6 +72,8 @@ class MinesweeperV(window.Window):
                 y_pos = y * self.tileSize + self.emptySpace[1]
                 row.append(TileSprite(x_pos, y_pos, self.tileSize, self.themeKey[10], self.batch))
             self.tiles.append(row)
+
+        self.gridSize = [len(self.tiles[0]) * self.tileSize, len(self.tiles) * self.tileSize]
 
     def setTheme(self, name):
         """
@@ -222,6 +226,12 @@ class MinesweeperV(window.Window):
         self.batch.draw()
         self.fps_display.draw()
 
+    def move_tiles_abs(self, x, y):
+        for ri, row in enumerate(self.tiles):
+            for ti, tile in enumerate(row):
+                tile.x = x + ti * self.tileSize
+                tile.y = y + ri * self.tileSize
+
     def on_mouse_release(self, x, y, button, modifiers):
         if self.dragging:
             self.dragging = False
@@ -246,19 +256,34 @@ class MinesweeperV(window.Window):
         self.btnNewGame.clickEvent(x, y, 0)
 
     def on_mouse_drag(self, x, y, dx, dy, buttons, modifiers):
+        mx, my = dx, dy
         self.dragging = True
+        x0, y0 = self.tiles[0][0].x, self.tiles[0][0].y
+
+
+        if x0 >= 0 and dx > 0:
+            mx = 0
+            self.move_tiles_abs(0, y0)
+        elif x0 + self.gridSize[0] <= self.width and dx < 0:
+            mx = 0
+            self.move_tiles_abs(self.width - self.gridSize[0], y0)
+        if y0 >= 0 and dy > 0:
+            my = 0
+            self.move_tiles_abs(x0, 0)
+        elif y0 + self.gridSize[1] <= self.height - self.barHeight and dy < 0:
+            my = 0
+            self.move_tiles_abs(x0, self.height - self.barHeight - self.gridSize[1])
+
         for row in self.tiles:
             for tile in row:
-                tile.x += dx
-                tile.y += dy
+                tile.x += mx
+                tile.y += my
         self.update_empty_space()
 
     def on_mouse_scroll(self, x, y, dx, dy):
-        # There is never a time when we want to scale tiles differently, so...
         newScale = dy * self.tileSize / 200
-        # print(dy)
-        print(self.tileSize)
         self.zoom(x, y, newScale)
+        self.gridSize = [len(self.tiles[0]) * self.tileSize, len(self.tiles) * self.tileSize]
 
     def update_empty_space(self):
         cornerTile = self.tiles[0][0]
