@@ -2,15 +2,14 @@ from tkinter import StringVar, ttk, Tk, mainloop
 from os import listdir
 import sys
 
-
-class SettingsWindow(Tk):
+class ConfigWindow(Tk):
     def __init__(self,  saveCommand, width=250, height=300):
-        super(SettingsWindow,self) .__init__("Game Configuration", f"{width}x{height}")
+        super(ConfigWindow,self) .__init__("Game Configuration", f"{width}x{height}")
         self.wm_attributes("-toolwindow", True)
         self.saveCommand = saveCommand
         self.difficulty = 0.16
-
-        path = "../../resources"
+        print(sys.path)
+        path = "./themes"
         themes = listdir(path)
         frm_buttons = ttk.Frame(self)
         frm_buttons.grid(column=0, row=1)
@@ -74,4 +73,3 @@ class SettingsWindow(Tk):
         self.difficulty = float(value)
         # Only take the first 4 digits for difficulty: 0.00
         label_difficultyText.set(f"Difficulty: {value[:4]}")
-
