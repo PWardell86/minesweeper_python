@@ -1,19 +1,23 @@
 from time import asctime, strftime, localtime
 
+log_path = "./log"
 level = {
     "INFO": 0,
-    "DEBUG": 1,
+    "ERROR": 1,
+    "DEBUG": 2,
+    "ALL": 4
 }
+default_level="ALL"
 
 
 class Logger:
-    def __init__(self, callingFrom, path, givenLevel, shouldArchive=False):
+    def __init__(self, callingFrom, givenLevel=default_level, shouldArchive=False, path=log_path):
         self.name = f"{type(callingFrom).__name__}-{strftime('%Y%m%d', localtime())}"
         self.path = path
         self.shouldArchive = shouldArchive
         self.callingFrom = callingFrom.__class__
         self.level = level[givenLevel]
-        with open(f"{self.path}/{self.name}.log"):
+        with open(f"{self.path}/{self.name}.log", "w"):
             pass
 
     def log(self, message: str, exception=None):
@@ -33,7 +37,7 @@ class Logger:
         if exception is not None:
             nice_message += f"{exception.__traceback__} \n"
         try:
-            if self.level <= level[name]:
+            if self.level >= level[name]:
                 print(nice_message, end="")
         except KeyError:
             pass

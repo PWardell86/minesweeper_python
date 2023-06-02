@@ -1,14 +1,18 @@
 from tkinter import StringVar, ttk, Tk, mainloop
 from os import listdir
 import sys
+from main.utils.Logger import Logger
 
 class ConfigWindow(Tk):
     def __init__(self,  saveCommand, width=250, height=300):
         super(ConfigWindow,self) .__init__("Game Configuration", f"{width}x{height}")
+        self.LOG = Logger(self)
+        self.LOG.debug(sys.path)
         self.wm_attributes("-toolwindow", True)
         self.saveCommand = saveCommand
         self.difficulty = 0.16
-        print(sys.path)
+        
+
         path = "./themes"
         themes = listdir(path)
         frm_buttons = ttk.Frame(self)
