@@ -1,4 +1,5 @@
 from time import asctime, strftime, localtime
+from os import mkdir
 
 log_path = "./log"
 level = {
@@ -17,25 +18,29 @@ class Logger:
         self.shouldArchive = shouldArchive
         self.callingFrom = callingFrom.__class__
         self.level = level[givenLevel]
+        try:
+            mkdir(log_path)
+        except FileExistsError:
+            self.debug("Directory ./log exists already... skipping creation")
         with open(f"{self.path}/{self.name}.log", "w"):
             pass
 
     def log(self, message: str, exception=None):
-        self.storeMessage(message, "LOG", exception)
+        self.store_message(message, "LOG", exception)
 
     def debug(self, message: str, exception=None):
-        self.storeMessage(message, "DEBUG", exception)
+        self.store_message(message, "DEBUG", exception)
 
     def warn(self, message: str, exception=None):
-        self.storeMessage(message, "WARN", exception)
+        self.store_message(message, "WARN", exception)
 
     def error(self, message: str, exception=None):
-        self.storeMessage(message, "ERROR", exception)
+        self.store_message(message, "ERROR", exception)
 
-    def storeMessage(self, message, name, exception):
+    def store_message(self, message, name, exception):
         nice_message = f"[{asctime(localtime())}]: {name} {self.callingFrom}: {message}\n"
         if exception is not None:
-            nice_message += f"{exception.__traceback__} \n"
+            nice_message += f"{exception.__traceback__}\n"
         try:
             if self.level >= level[name]:
                 print(nice_message, end="")
