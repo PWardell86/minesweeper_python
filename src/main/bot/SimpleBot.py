@@ -7,8 +7,8 @@ class SimpleBot(Bot):
         # A list of methods for each special case
         # Must be methods that take no input
         self.theseRules = [
-            self.revealAllTilesRule
-            , self.flagAllTilesRule
+            self.revealAllTilesRule, 
+            self.flagAllTilesRule
         ]
         self.allRules += self.theseRules
 

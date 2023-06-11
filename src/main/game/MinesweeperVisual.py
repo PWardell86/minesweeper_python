@@ -12,7 +12,7 @@ def getButtonSize(h):
 
 
 class MinesweeperV(window.Window):
-    def __init__(self, theme="Default", difficulty=0.25, gameSize=(10, 10), windowSize=(500, 500)):
+    def __init__(self, theme="Default", difficulty=0.25, gameSize=(10, 10), windowSize=(500, 500), dev=False):
         super(MinesweeperV, self).__init__(
             windowSize[0], windowSize[1], caption="Minesweeper")
 
@@ -22,7 +22,9 @@ class MinesweeperV(window.Window):
         self.tiles = []  # A 2D list indexed by (y, x)
         self.dragging = False
         self.prevTime = 0
-        self.fps_display = window.FPSDisplay(window=self)
+        self.dev = dev
+        if self.dev:
+            self.fps_display = window.FPSDisplay(window=self)
 
         # Initialize the top bar, and counters for timer and flags
         self.sprtTopBar = sprite.Sprite(resource.image(
@@ -224,7 +226,8 @@ class MinesweeperV(window.Window):
     def on_draw(self):
         self.clear()
         self.batch.draw()
-        self.fps_display.draw()
+        if self.dev:
+            self.fps_display.draw()
 
     def move_tiles_abs(self, x, y):
         for ri, row in enumerate(self.tiles):
