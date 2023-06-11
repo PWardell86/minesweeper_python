@@ -3,17 +3,19 @@ from src.main.bot.SimpleBot import SimpleBot
 from src.main.bot.SuperiorBot import SuperiorBot
 from src.main.game import MinesweeperModelControl
 
-NUMBER_OF_BOTS = 3
 BOTS = {1: SimpleBot,
         2: IntermediateBot,
         3: SuperiorBot
         }
 
+NUMBER_OF_BOTS = len(BOTS)
 
-def playWithBot(level: int, game: MinesweeperModelControl, clock, interval, testChanges=False):
+
+def playWithBot(level: int, game: MinesweeperModelControl, clock, interval: int, testChanges=False):
     try:
-        bot = BOTS[level](game)
+        bot = BOTS[int(level)](game)
     except KeyError:
+        # TODO: Add logging
         bot = None
 
     if bot is not None:

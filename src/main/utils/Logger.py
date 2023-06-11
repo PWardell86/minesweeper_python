@@ -1,39 +1,48 @@
 from time import asctime, strftime, localtime
+from os import mkdir
 
+log_path = "./log"
 level = {
     "INFO": 0,
-    "DEBUG": 1,
+    "ERROR": 1,
+    "DEBUG": 2,
+    "ALL": 4
 }
+default_level="ALL"
 
 
 class Logger:
-    def __init__(self, callingFrom, path, givenLevel, shouldArchive=False):
+    def __init__(self, callingFrom, givenLevel=default_level, shouldArchive=False, path=log_path):
         self.name = f"{type(callingFrom).__name__}-{strftime('%Y%m%d', localtime())}"
         self.path = path
         self.shouldArchive = shouldArchive
         self.callingFrom = callingFrom.__class__
         self.level = level[givenLevel]
-        with open(f"{self.path}/{self.name}.log"):
+        try:
+            mkdir(log_path)
+        except FileExistsError:
+            self.debug("Directory ./log exists already... skipping creation")
+        with open(f"{self.path}/{self.name}.log", "w"):
             pass
 
     def log(self, message: str, exception=None):
-        self.storeMessage(message, "LOG", exception)
+        self.store_message(message, "LOG", exception)
 
     def debug(self, message: str, exception=None):
-        self.storeMessage(message, "DEBUG", exception)
+        self.store_message(message, "DEBUG", exception)
 
     def warn(self, message: str, exception=None):
-        self.storeMessage(message, "WARN", exception)
+        self.store_message(message, "WARN", exception)
 
     def error(self, message: str, exception=None):
-        self.storeMessage(message, "ERROR", exception)
+        self.store_message(message, "ERROR", exception)
 
-    def storeMessage(self, message, name, exception):
+    def store_message(self, message, name, exception):
         nice_message = f"[{asctime(localtime())}]: {name} {self.callingFrom}: {message}\n"
         if exception is not None:
-            nice_message += f"{exception.__traceback__} \n"
+            nice_message += f"{exception.__traceback__}\n"
         try:
-            if self.level <= level[name]:
+            if self.level >= level[name]:
                 print(nice_message, end="")
         except KeyError:
             pass
