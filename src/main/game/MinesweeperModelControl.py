@@ -167,3 +167,8 @@ class MinesweeperMC:
     def save(self, difficulty, gameSize):
         self.difficulty = difficulty
         self.gameSize = gameSize
+
+    def for_tiles(self, inner_func):
+        for row in self.tiles:
+            for tile in row:
+                inner_func(tile)

@@ -23,6 +23,14 @@ class TileSet(list):
     def getTileFromTile(self, tile):
         return self.getTileAtIndex(tile.index)
 
+    def getFlaggedCount(self):
+        count = 0
+        for row in self:
+            for tile in row:
+                if tile.flagged:
+                    count += 1
+        return count
+
 
 def generateDummyTiles(rows: int, columns: int):
     dummyTiles = []

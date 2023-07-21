@@ -6,12 +6,12 @@ class Bot:
         self.visual = game
         # A list of methods for each special case
 
-        self.theseRules = []
-        self.allRules = []
-        self.didSomething = False
+        self.these_rules = []
+        self.all_rules = []
+        self.did_something = False
 
-    def testOnlyCurrentLevelRules(self):
-        self.allRules = self.theseRules
+    def only_test_current_level_rules(self):
+        self.all_rules = self.these_rules
 
     def start(self):
         self.game.startGame(self.game.gameSize[0] // 2, self.game.gameSize[1] // 2)
@@ -20,17 +20,12 @@ class Bot:
         if self.game.gameOver:
             return
         if self.game.started:
-            self.didSomething = False
-            for row in self.game.tiles:
-                for tile in row:
-                    self.iterateCases(tile)
-            if self.didSomething:
-                print("Did something...")
-            else:
-                print("Done...")
-
+            self.did_something = False
+            self.game.for_tiles(self.iterate_cases)
+            if self.did_something:
+                print("Working...")
             self.visual.update()
 
-    def iterateCases(self, tile):
-        for case in self.allRules:
-            case(tile)
+    def iterate_cases(self, tile):
+        for rule in self.all_rules:
+            rule(tile)

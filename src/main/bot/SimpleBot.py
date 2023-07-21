@@ -10,7 +10,7 @@ class SimpleBot(Bot):
             self.revealAllTilesRule, 
             self.flagAllTilesRule
         ]
-        self.allRules += self.theseRules
+        self.all_rules += self.theseRules
 
     def flagAllTilesRule(self, tile):
         if tile.revealed:

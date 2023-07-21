@@ -2,10 +2,11 @@ from pyglet import window, resource, sprite, graphics
 
 from src.main.components.Counter import Timer, Counter
 from src.main.components.MSButton import Button
+from src.main.components.TopBar import TopBar
 from src.main.game.MinesweeperModelControl import MinesweeperMC
 from src.main.components.ConfigurationWindow import ConfigWindow
 from src.main.game.TileSprite import TileSprite
-
+from time import time
 
 def getButtonSize(h):
     return h / 1.5
@@ -13,19 +14,21 @@ def getButtonSize(h):
 
 class MinesweeperV(window.Window):
     def __init__(self, theme="Default", difficulty=0.25, gameSize=(10, 10), windowSize=(500, 500), dev=False):
+        # TODO: Clean up this initialization
         super(MinesweeperV, self).__init__(
             windowSize[0], windowSize[1], caption="Minesweeper")
-
         self.minesweeperControl = MinesweeperMC(gameSize, difficulty)
         self.themeDir = theme
         self.batch = graphics.Batch()
         self.tiles = []  # A 2D list indexed by (y, x)
         self.dragging = False
         self.prevTime = 0
+        self.mouse_down_time = 0
         self.dev = dev
         if self.dev:
             self.fps_display = window.FPSDisplay(window=self)
 
+        # TODO: Refactor the top bar into a separate class
         # Initialize the top bar, and counters for timer and flags
         self.sprtTopBar = sprite.Sprite(resource.image(
             f"{self.themeDir}/TopBar.png"), batch=self.batch, group=graphics.OrderedGroup(1))
@@ -42,6 +45,7 @@ class MinesweeperV(window.Window):
              (gameSize[1] * self.tileSize)) / 2
         ]
 
+        # TODO: Refactor the button initialization into a new class
         # Initialize the buttons for a new main and settings
         pressed_img = resource.image(f"{self.themeDir}/settings0.png")
         unpressed_img = resource.image(f"{self.themeDir}/settings1.png")
@@ -86,27 +90,26 @@ class MinesweeperV(window.Window):
         self.themeKey = self.getThemeKey()
 
     def update(self):
-        flags = 0
+        self.cntFlags.setCounter(self.minesweeperControl.tiles.getFlaggedCount())
         for y, row in enumerate(self.tiles):
             for x, tile in enumerate(row):
-                refTile = self.minesweeperControl.tiles[y][x]
-                if refTile.flagged:
-                    flags += 1
-                if not refTile.updated:
-                    if refTile.flagged:
-                        tile.image = self.getThemeKey()[-1]
-                    else: 
-                        if refTile.revealed:
-                            tile.image = self.getThemeKey()[refTile.value]
-                        else: 
-                            tile.image = self.getThemeKey()[10]
-                    refTile.updated = True
-        self.cntFlags.setCounter(flags)
+                self.update_tile(tile, self.minesweeperControl.tiles[y][x])
+        self.timer.locked = self.minesweeperControl.gameOver or not self.minesweeperControl.started
 
-        if not self.minesweeperControl.gameOver:
-            self.timer.locked = not self.minesweeperControl.started
+    def update_tile(self, tile, reference_tile):
+        """
+        Updates the tile at the given coordinates to the reference tile's state
+        """
+        if reference_tile.updated:
+            return
+        if reference_tile.flagged:
+            tile.image = self.themeKey[-1]
         else:
-            self.timer.locked = True
+            if reference_tile.revealed:
+                tile.image = self.themeKey[reference_tile.value]
+            else:
+                tile.image = self.themeKey[10]
+        reference_tile.updated = True
 
     def getThemeKey(self):
         d = {-1: "flag.png",
@@ -163,7 +166,6 @@ class MinesweeperV(window.Window):
         """
         Resets the main to its initial state with all class variables
         """
-        # Resets the main
 
         for row in self.tiles:
             for tile in row:
@@ -235,7 +237,7 @@ class MinesweeperV(window.Window):
                 tile.x = x + ti * self.tileSize
                 tile.y = y + ri * self.tileSize
 
-    def on_mouse_release(self, x, y, button, modifiers):
+    def on_mouse_release(self, x, y, button, _1):
         if self.dragging:
             self.dragging = False
             return
@@ -254,33 +256,34 @@ class MinesweeperV(window.Window):
                 self.minesweeperControl.clickEvent(x_pos, y_pos, False)
         self.update()
 
-    def on_mouse_press(self, x, y, buttons, modifiers):
+    def on_mouse_press(self, x, y, _, _1):
+        self.mouse_down_time = time()
         self.btnSettings.clickEvent(x, y, 0)
         self.btnNewGame.clickEvent(x, y, 0)
 
-    def on_mouse_drag(self, x, y, dx, dy, buttons, modifiers):
-        mx, my = dx, dy
+    def on_mouse_drag(self, x, y, dx, dy, _, _1):
+        # if the mouse has not moved far, or we have not been dragging for long, do not drag
+        move_threshold = 5
+        time_threshold = 0.2
+        if (abs(dx) < move_threshold and abs(dy) < move_threshold) and (time() - self.mouse_down_time < time_threshold):
+            return
         self.dragging = True
-        x0, y0 = self.tiles[0][0].x, self.tiles[0][0].y
-
-        if x0 >= 0 and dx > 0:
-            mx = 0
-            self.move_tiles_abs(0, y0)
-        elif x0 + self.gridSize[0] <= self.width and dx < 0:
-            mx = 0
-            self.move_tiles_abs(self.width - self.gridSize[0], y0)
-        if y0 >= 0 and dy > 0:
-            my = 0
-            self.move_tiles_abs(x0, 0)
-        elif y0 + self.gridSize[1] <= self.height - self.barHeight and dy < 0:
-            my = 0
-            self.move_tiles_abs(x0, self.height - self.barHeight - self.gridSize[1])
-
-        for row in self.tiles:
-            for tile in row:
-                tile.x += mx
-                tile.y += my
-        self.update_empty_space()
+        x_min = self.emptySpace[0] + dx
+        y_min = self.emptySpace[1] + dy
+        x_max = self.minesweeperControl.gameSize[0] * self.tileSize + self.emptySpace[0] + dx
+        y_max = self.minesweeperControl.gameSize[1] * self.tileSize + self.emptySpace[1] + dy
+        if x_min > 0:
+            dx -= x_min
+        if x_max < self.width:
+            dx += self.width - x_max
+        if y_min > 0:
+            dy -= y_min
+        if y_max < self.height - self.barHeight:
+            dy += self.height - self.barHeight - y_max
+        self.emptySpace[0] += dx
+        self.emptySpace[1] += dy
+        self.move_tiles_abs(self.emptySpace[0], self.emptySpace[1])
+        
 
     def on_mouse_scroll(self, x, y, dx, dy):
         newScale = dy * self.tileSize / 200

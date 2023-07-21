@@ -4,12 +4,12 @@ import sys
 from main.utils.Logger import Logger
 
 class ConfigWindow(Tk):
-    def __init__(self,  saveCommand, width=250, height=300):
+    def __init__(self,  save_command, width=250, height=300):
         super(ConfigWindow,self) .__init__("Game Configuration", f"{width}x{height}")
         self.LOG = Logger(self)
         self.LOG.debug(sys.path)
         self.wm_attributes("-toolwindow", True)
-        self.saveCommand = saveCommand
+        self.save_command = save_command
         self.difficulty = 0.16
         
 
@@ -24,16 +24,14 @@ class ConfigWindow(Tk):
         # Make the text labels for the inputs
         self.label_windowSize = ttk.Label(frame_input, text="Window Size: ")
         self.label_gameSize = ttk.Label(frame_input, text="Game Size: ")
-        label_difficultyText = StringVar(frame_input, value=f"Difficulty: {self.difficulty}")
+        lbl_diff_text = StringVar(frame_input, value=f"Difficulty: {self.difficulty}")
         self.label_difficulty = ttk.Label(
-            frame_input, textvariable=label_difficultyText, width=14)
+            frame_input, textvariable=lbl_diff_text, width=14)
         self.label_theme = ttk.Label(frame_input, text="Theme: ")
 
         # Make the inputs
         self.combo_theme = ttk.Combobox(frame_input, values=themes)
-        self.scale_difficulty = ttk.Scale(
-            frame_input, value=0.16, from_=0, to=1,
-            command=lambda v: self.lblDiffUpdate(v, label_difficultyText))
+        self.scale_difficulty = ttk.Scale(frame_input, value=0.16, from_=0, to=1, command=lambda v: self.lblDiffUpdate(v, lbl_diff_text))
         self.entry_windowSize = ttk.Entry(frame_input)
         self.entry_gameSize = ttk.Entry(frame_input)
 
@@ -57,23 +55,25 @@ class ConfigWindow(Tk):
         mainloop()
 
     def save(self):
-        windowSizeRaw = self.entry_windowSize.get().split(", ")
-        windowSize = []
-        windowSize[0] = int(windowSizeRaw[0])
-        windowSize[1] = int(windowSizeRaw[1])
-
-        gameSizeRaw = self.entry_gameSize.get().split(", ")
-        gameSize = []
-        gameSize[0] = int(gameSizeRaw[0])
-        gameSize[1] = int(gameSizeRaw[1])
+        try:
+            windowSize = self.getAndValidateEntryInput(self.entry_windowSize)
+            gameSize = self.getAndValidateEntryInput(self.entry_gameSize)
+        except ValueError:
+            self.entry_windowSize.delete(0, -1)
+            self.entry_gameSize.delete(0, -1)
+            return
 
         theme = self.combo_theme.get()
         if self.difficulty == 0:
             self.difficulty = 0.16
         self.destroy()
-        self.saveCommand(theme, self.difficulty, gameSize, windowSize)
+        self.save_command(theme, self.difficulty, gameSize, windowSize)
 
-    def lblDiffUpdate(self, value, label_difficultyText):
+    def lblDiffUpdate(self, value, lbl_diff_text):
         self.difficulty = float(value)
         # Only take the first 4 digits for difficulty: 0.00
-        label_difficultyText.set(f"Difficulty: {value[:4]}")
+        lbl_diff_text.set(f"Difficulty: {value[:4]}")
+
+    def getAndValidateEntryInput(self, entry):
+        split_input = entry.get().split(",")
+        return [int(value.strip()) for value in split_input]

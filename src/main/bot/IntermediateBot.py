@@ -9,7 +9,7 @@ class IntermediateBot(src.main.bot.SimpleBot.SimpleBot):
             self.twoNearOneRule,
             self.valueOneSharesAllNearTilesRule
         ]
-        self.allRules += self.theseRules
+        self.all_rules += self.theseRules
 
     def twoNearOneRule(self, tile):
         self.checkAndRevealTwoOneCase(tile, tile.nearTiles)

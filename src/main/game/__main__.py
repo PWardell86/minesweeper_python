@@ -15,7 +15,7 @@ gl.glTexParameteri(gl.GL_TEXTURE_2D, gl.GL_TEXTURE_MAG_FILTER, gl.GL_NEAREST)
 gl.glTexParameteri(gl.GL_TEXTURE_2D, gl.GL_TEXTURE_MIN_FILTER, gl.GL_NEAREST)
 
 # Take command line arguments and pass them to the game
-botLevel = 0
+bot_level = 0
 argsMap = {}
 for arg in argv:
     keyValue = arg.split("=")
@@ -28,7 +28,7 @@ if "--dev" in argsMap:
     print("In dev mode...")
 if "--bot" in argsMap:
     print(f"With bot level: {argsMap['--bot']}...")
-    botLevel = argsMap["--bot"]
+    bot_level = argsMap["--bot"]
 
 startGame(0.16, (15, 20), bot_level)
 

@@ -21,7 +21,7 @@ def playWithBot(level: int, game: MinesweeperModelControl, clock, interval: int,
     if bot is not None:
         if testChanges:
             bot.testOnlyCurrentLevelRules()
-            print(bot.allRules)
+            print(bot.all_rules)
         bot.start()
         if interval is None:
             clock.schedule(bot.tick)
