@@ -15,7 +15,7 @@ class Button(sprite.Sprite):
         
         self.command = lambda: command()
 
-    def clickEvent(self, cx, cy, released):
+    def click_event(self, cx, cy, released):
         if self.x < cx < self.x + self.width and self.y < cy < self.y + self.height:
             if released == 0:
                 self.image = self.press_image

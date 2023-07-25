@@ -2,80 +2,74 @@ from random import random
 from src.main.game.ControlTile import ControlTile
 from src.main.utils.TileUtils import TileSet
 
-DEFAULT_DIFF = 0.16
-DEFAULT_SIZE = (20, 15)
-
-
 class MinesweeperMC:
-    def __init__(self, gameSize=DEFAULT_SIZE, difficulty=DEFAULT_DIFF):
+    def __init__(self, game_size, difficulty):
         self.tiles = TileSet()
         self.difficulty = difficulty
-        self.gameSize = gameSize
+        self.game_size = game_size
         self.started = False
-        self.gameOver = False
+        self.game_over = False
 
         # Generate unrevealed tiles with no other values as a placeholder until the main is started
-        for y in range(self.gameSize[1]):
+        for y in range(self.game_size[1]):
             row = []
-            for x in range(self.gameSize[0]):
-                row.append(ControlTile(x, y, y * self.gameSize[0] + x))
+            for x in range(self.game_size[0]):
+                row.append(ControlTile(x, y, y * self.game_size[0] + x))
             self.tiles.append(row)
 
 
-    def clickEvent(self, x, y, flag):
-        if self.started and not self.gameOver:
+    def click_event(self, x, y, flag):
+        if self.started and not self.game_over:
             if flag:
-                self.flagTile(x, y)
+                self.flag_tile(x, y)
             else:
-                self.revealTile(x, y)
+                self.reveal_tile(x, y)
         else:
-            self.startGame(x, y)
+            self.start_game(x, y)
 
     def reset(self):
         self.tiles = TileSet()
-        self.difficulty = DEFAULT_DIFF
-        self.gameSize = DEFAULT_SIZE
         self.started = False
-        self.gameOver = False
+        self.game_over = False
 
         # Generate unrevealed tiles with no other values as a placeholder until the main is started
-        for y in range(self.gameSize[1]):
+        for y in range(self.game_size[1]):
             row = []
-            for x in range(self.gameSize[0]):
-                row.append(ControlTile(x, y, y * self.gameSize[0] + x))
+            for x in range(self.game_size[0]):
+                row.append(ControlTile(x, y, y * self.game_size[0] + x))
             self.tiles.append(row)
 
-    def revealTile(self, x, y):
+    def reveal_tile(self, x, y):
         tile = self.tiles.getTileAtCoord(x, y)
         if not (tile.flagged or tile.revealed):
             tile.revealed = True
             tile.updated = False
             if tile.value == 0:
-                return self.revealAllNearTiles(x, y)
+                return self.reveal_all_near_tiles(x, y)
             if tile.value == 9:
-                self.endGame()
+                self.end_game()
                 return False
         elif not tile.flagged and tile.revealed:
             tile.updated = False
-            return self.autoClearNearTiles(x, y)
+            return self.auto_clear_near_tiles(x, y)
 
         return False
 
-    def flagTile(self, x, y):
+    def flag_tile(self, x, y):
         tile = self.tiles.getTileAtCoord(x, y)
         if not tile.revealed:
             tile.flagged = not tile.flagged
             tile.updated = False
 
-    def generateBombs(self, start_x, start_y):
+    def generate_bombs(self, start_x, start_y):
         self.tiles = TileSet()
-        tiles_left = self.gameSize[0] * self.gameSize[1]
+        tiles_left = self.game_size[0] * self.game_size[1]
         bombs_left = tiles_left * self.difficulty
 
         # Generate the bombs
-        for y in range(self.gameSize[1]):
+        for y in range(self.game_size[1]):
             row = []
-            for x in range(self.gameSize[0]):
+            for x in range(self.game_size[0]):
                 # Do not place any bombs within a radius of one of the clicked position
                 # This is done so the start of the main is easier
                 dx = abs(start_x - x)
@@ -89,30 +83,30 @@ class MinesweeperMC:
                         value = 9
                         bombs_left -= 1
 
-                new_tile = ControlTile(x, y, y * self.gameSize[0] + x, value=value)
+                new_tile = ControlTile(x, y, y * self.game_size[0] + x, value=value)
                 tiles_left -= 1
                 row.append(new_tile)
             self.tiles.append(row)
 
-    def generateTileValues(self):
-        for y in range(self.gameSize[1]):
-            for x in range(self.gameSize[0]):
-                currentTile = self.tiles.getTileAtCoord(x, y)
-                currentTile.setNearTiles(self.getNearTiles(x, y))
-                if currentTile.value is None:
+    def generate_tile_values(self):
+        for y in range(self.game_size[1]):
+            for x in range(self.game_size[0]):
+                current_tile = self.tiles.getTileAtCoord(x, y)
+                current_tile.set_near_tiles(self.get_near_tiles(x, y))
+                if current_tile.value is None:
                     bombs_near = 0
                     # The value of each tile that isn't a bomb is equal to the number of bombs adjacent to it
-                    for near_tile in currentTile.nearTiles:
+                    for near_tile in current_tile.near_tiles:
                         if near_tile.value == 9:
                             bombs_near += 1
-                    currentTile.value = bombs_near
+                    current_tile.value = bombs_near
 
-    def generateTiles(self, x, y):
-        self.generateBombs(x, y)
-        self.generateTileValues()
+    def generate_tiles(self, x, y):
+        self.generate_bombs(x, y)
+        self.generate_tile_values()
 
-    def endGame(self):
-        self.gameOver = True
+    def end_game(self):
+        self.game_over = True
 
         def f(tile):
             if tile.value == 9:
@@ -121,33 +115,33 @@ class MinesweeperMC:
 
         self.tiles.forAll(f)
 
-    def startGame(self, x, y):
+    def start_game(self, x, y):
         self.started = True
-        self.generateTiles(x, y)
-        self.revealTile(x, y)
+        self.generate_tiles(x, y)
+        self.reveal_tile(x, y)
 
-    def revealAllNearTiles(self, x, y):
+    def reveal_all_near_tiles(self, x, y):
         output = False
-        for tile in self.tiles.getTileAtCoord(x, y).nearTiles:
-            output |= self.revealTile(tile.x, tile.y)
+        for tile in self.tiles.getTileAtCoord(x, y).near_tiles:
+            output |= self.reveal_tile(tile.x, tile.y)
         return output
 
-    def getNearTiles(self, x, y):
+    def get_near_tiles(self, x, y):
         near_tiles = []
         for px in range(x - 1, x + 2):
             for py in range(y - 1, y + 2):
                 if px != x or py != y:
-                    if 0 <= px < self.gameSize[0] and 0 <= py < self.gameSize[1]:
+                    if 0 <= px < self.game_size[0] and 0 <= py < self.game_size[1]:
                         near_tiles += [self.tiles.getTileAtCoord(px, py)]
         return near_tiles
 
-    def autoClearNearTiles(self, x, y):
+    def auto_clear_near_tiles(self, x, y):
         output = False
         tile = self.tiles.getTileAtCoord(x, y)
-        if tile.revealed and tile.getNearFlags() == tile.value:
-            for nt in tile.nearTiles:
+        if tile.revealed and tile.get_near_flags() == tile.value:
+            for nt in tile.near_tiles:
                 if not nt.revealed:
-                    output |= self.revealTile(nt.x, nt.y)
+                    output |= self.reveal_tile(nt.x, nt.y)
         return output
 
     def pretty(self):
@@ -164,9 +158,9 @@ class MinesweeperMC:
             output += "\n"
         return output
 
-    def save(self, difficulty, gameSize):
+    def save(self, difficulty, game_size):
         self.difficulty = difficulty
-        self.gameSize = gameSize
+        self.game_size = game_size
 
     def for_tiles(self, inner_func):
         for row in self.tiles:

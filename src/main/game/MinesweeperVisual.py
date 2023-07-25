@@ -9,10 +9,10 @@ from src.main.game.TileSprite import TileSprite
 from time import time
 
 class MinesweeperV(window.Window):
-    def __init__(self, theme="Default", difficulty=0.25, gameSize=(10, 10), windowSize=(500, 500), dev=False):
+    def __init__(self, theme, difficulty, game_size, window_size, dev=False):
         super(MinesweeperV, self).__init__(
-            windowSize[0], windowSize[1], caption="Minesweeper")
-        self.minesweeper_control = MinesweeperMC(gameSize, difficulty)
+            window_size[0], window_size[1], caption="Minesweeper")
+        self.minesweeper_control = MinesweeperMC(game_size, difficulty)
         self.theme_dir = theme
         self.theme_key = self.get_theme_key()
         self.batch = graphics.Batch() 
@@ -41,9 +41,9 @@ class MinesweeperV(window.Window):
         self.grid_size = [len(self.tiles[0]) * self.tile_size, len(self.tiles) * self.tile_size]
 
     def generate_blank_tiles(self):
-        for y in range(self.minesweeper_control.gameSize[1]):
+        for y in range(self.minesweeper_control.game_size[1]):
             row = []
-            for x in range(self.minesweeper_control.gameSize[0]):
+            for x in range(self.minesweeper_control.game_size[0]):
                 x_pos = x * self.tile_size + self.empty_space[0]
                 y_pos = y * self.tile_size + self.empty_space[1]
                 row.append(TileSprite(x_pos, y_pos, self.tile_size, self.theme_key[10], self.batch))
@@ -51,14 +51,14 @@ class MinesweeperV(window.Window):
 
     def calculate_empty_space(self):
         self.empty_space = [
-            (self.width - (self.minesweeper_control.gameSize[0] * self.tile_size)) / 2,
+            (self.width - (self.minesweeper_control.game_size[0] * self.tile_size)) / 2,
             (self.height - self.top_bar.getHeight() -
-             (self.minesweeper_control.gameSize[1] * self.tile_size)) / 2
+             (self.minesweeper_control.game_size[1] * self.tile_size)) / 2
         ]
 
     def calculate_tile_size(self):
-        self.tile_size = min(self.width // self.minesweeper_control.gameSize[0],
-                            (self.height - self.top_bar.getHeight()) // self.minesweeper_control.gameSize[1])
+        self.tile_size = min(self.width // self.minesweeper_control.game_size[0],
+                            (self.height - self.top_bar.getHeight()) // self.minesweeper_control.game_size[1])
 
     def set_theme(self, name):
         self.theme_dir = name
@@ -69,7 +69,7 @@ class MinesweeperV(window.Window):
         for y, row in enumerate(self.tiles):
             for x, tile in enumerate(row):
                 self.update_tile(tile, self.minesweeper_control.tiles[y][x])
-        self.timer.locked = self.minesweeper_control.gameOver or not self.minesweeper_control.started
+        self.timer.locked = self.minesweeper_control.game_over or not self.minesweeper_control.started
 
     def update_tile(self, update_tile, ref_tile):
         if ref_tile.updated:
@@ -153,8 +153,8 @@ class MinesweeperV(window.Window):
     def is_click_on_tiles(self, clickX, clickY):
         x_min = self.empty_space[0]
         y_min = self.empty_space[1]
-        x_max = self.minesweeper_control.gameSize[0] * self.tile_size + self.empty_space[0]
-        y_max = self.minesweeper_control.gameSize[1] * self.tile_size + self.empty_space[1]
+        x_max = self.minesweeper_control.game_size[0] * self.tile_size + self.empty_space[0]
+        y_max = self.minesweeper_control.game_size[1] * self.tile_size + self.empty_space[1]
         return x_min < clickX < x_max and y_min < clickY < y_max
 
     def on_draw(self):
@@ -177,19 +177,19 @@ class MinesweeperV(window.Window):
         x_pos, y_pos = int((x - self.empty_space[0]) / self.tile_size), int((y - self.empty_space[1]) / self.tile_size)
 
         # Check if the mouse is in the top bar
-        self.btn_settings.clickEvent(x, y, 1)
-        self.btn_newGame.clickEvent(x, y, 1)
+        self.btn_settings.click_event(x, y, 1)
+        self.btn_newGame.click_event(x, y, 1)
         if self.is_click_on_tiles(x, y):
             if button == RIGHT:
-                self.minesweeper_control.clickEvent(x_pos, y_pos, True)
+                self.minesweeper_control.click_event(x_pos, y_pos, True)
             elif button == LEFT:
-                self.minesweeper_control.clickEvent(x_pos, y_pos, False)
+                self.minesweeper_control.click_event(x_pos, y_pos, False)
         self.update()
 
     def on_mouse_press(self, x, y, _, _1):
         self.mouse_down_time = time()
-        self.btn_settings.clickEvent(x, y, 0)
-        self.btn_newGame.clickEvent(x, y, 0)
+        self.btn_settings.click_event(x, y, 0)
+        self.btn_newGame.click_event(x, y, 0)
 
     def on_mouse_drag(self, x, y, dx, dy, _, _1):
         # if the mouse has not moved far, or we have not been dragging for long, do not drag
@@ -199,8 +199,8 @@ class MinesweeperV(window.Window):
             return
         self.dragging = True
         x_min, y_min = self.empty_space[0] + dx, self.empty_space[1] + dy
-        x_max = self.minesweeper_control.gameSize[0] * self.tile_size + self.empty_space[0] + dx
-        y_max = self.minesweeper_control.gameSize[1] * self.tile_size + self.empty_space[1] + dy
+        x_max = self.minesweeper_control.game_size[0] * self.tile_size + self.empty_space[0] + dx
+        y_max = self.minesweeper_control.game_size[1] * self.tile_size + self.empty_space[1] + dy
         if x_min > 0:
             dx -= x_min
         elif x_max < self.width:

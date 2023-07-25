@@ -1,21 +1,21 @@
 class ControlTile:
-    def __init__(self, x, y, index, value=None, nearTiles=None):
+    def __init__(self, x, y, index, value=None, near_tiles=None):
         self.x = x
         self.y = y
         self.index = index
         self.value = value
         self.flagged = False
         self.revealed = False
-        self.nearTiles = nearTiles
+        self.near_tiles = near_tiles
         self.updated = False
 
-    def setNearTiles(self, nearTiles):
-        self.nearTiles = nearTiles
+    def set_near_tiles(self, near_tiles):
+        self.near_tiles = near_tiles
 
-    def getNearFlags(self):
+    def get_near_flags(self):
         flags = 0
         try:
-            for tile in self.nearTiles:
+            for tile in self.near_tiles:
                 if tile.flagged:
                     flags += 1
         except TypeError as e:
@@ -27,7 +27,7 @@ class ControlTile:
         output = f"({self.x}, {self.y}), V: {self.value}, F: {self.flagged}, R: {self.revealed}"
         return output
 
-    def markToUpdate(self):
+    def mark_to_update(self):
         self.updated = False
 
 

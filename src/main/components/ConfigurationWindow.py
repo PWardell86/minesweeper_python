@@ -4,7 +4,7 @@ import sys
 from main.utils.Logger import Logger
 
 class ConfigWindow(Tk):
-    def __init__(self,  save_command, width=250, height=300):
+    def __init__(self,  save_command, themeDir, width=250, height=300):
         super(ConfigWindow,self) .__init__("Game Configuration", f"{width}x{height}")
         self.LOG = Logger(self)
         self.LOG.debug(sys.path)
@@ -12,9 +12,7 @@ class ConfigWindow(Tk):
         self.save_command = save_command
         self.difficulty = 0.16
         
-
-        path = "./themes"
-        themes = listdir(path)
+        themes = listdir(themeDir)
         frm_buttons = ttk.Frame(self)
         frm_buttons.grid(column=0, row=1)
 
@@ -45,10 +43,8 @@ class ConfigWindow(Tk):
         self.entry_windowSize.grid(column=1, row=0)
         self.entry_gameSize.grid(column=1, row=1)
 
-        btnCancel = ttk.Button(
-            frm_buttons, text="Cancel", command=self.destroy)
-        btnSave = ttk.Button(
-            frm_buttons, text="Save and Exit", command=self.save)
+        btnCancel = ttk.Button(frm_buttons, text="Cancel", command=self.destroy)
+        btnSave = ttk.Button(frm_buttons, text="Save and Exit", command=self.save)
         btnCancel.grid(column=0, row=0)
         btnSave.grid(column=1, row=0)
 
@@ -71,7 +67,6 @@ class ConfigWindow(Tk):
 
     def lblDiffUpdate(self, value, lbl_diff_text):
         self.difficulty = float(value)
-        # Only take the first 4 digits for difficulty: 0.00
         lbl_diff_text.set(f"Difficulty: {value[:4]}")
 
     def getAndValidateEntryInput(self, entry):
