@@ -1,6 +1,6 @@
 from time import time
 
-from pyglet import graphics, resource, sprite, window
+from pyglet import font, graphics, resource, sprite, window
 from pyglet.window.mouse import LEFT, RIGHT
 
 from main.components.ConfigurationWindow import ConfigWindow
@@ -28,13 +28,13 @@ class MinesweeperV(window.Window):
         self.dev = dev
         if dev:
             self.fps_display = window.FPSDisplay(window=self)
-
+        resource.add_font(f"{self.theme_dir}/7-segments.ttf")
         self.top_bar = TopBar(self, self.theme_dir, self.batch)
         self.btn_settings = Button(self.top_bar, 1, "settings1.png", "settings0.png", self.theme_dir, self.batch, lambda: ConfigWindow(self.save, "./src/themes"))
         self.btn_newGame = Button(self.top_bar, 0, "newGame1.png", "newGame0.png", self.theme_dir, self.batch, self.reset)
-        self.timer = Timer(self.width / 3, self.height - (self.top_bar.getHeight() / 2), self.batch)
+        self.timer = Timer(self.width / 3, self.height - (self.top_bar.getHeight() / 2), self.theme_dir, self.batch)
         self.timer.locked = True
-        self.cntFlags = Counter(2 * self.width / 3, self.height - (self.top_bar.getHeight() / 2), self.batch)
+        self.cntFlags = Counter(2 * self.width / 3, self.height - (self.top_bar.getHeight() / 2), self.theme_dir, self.batch)
 
         self.calculate_tile_size()
         self.zoom_minmax = [0.5, self.tile_size]
