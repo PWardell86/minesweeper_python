@@ -1,5 +1,7 @@
-from jproperties import Properties
 from sys import path
+
+from jproperties import Properties
+
 
 class PropertiesUtils(Properties):
     def __init__(self, file):

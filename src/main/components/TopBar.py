@@ -1,4 +1,5 @@
-from pyglet import sprite, resource, graphics
+from pyglet import graphics, resource, sprite
+
 
 class TopBar(sprite.Sprite):
     def __init__(self, parent, theme_dir, batch):

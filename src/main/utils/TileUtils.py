@@ -1,6 +1,8 @@
-from pyglet import resource
-from main.game.ControlTile import ControlTile
 from sys import path
+
+from pyglet import resource
+
+from main.components.ControlTile import ControlTile
 
 TEST_PATH = "test/testBlank.png"
 TEST_IMAGE = resource.image(TEST_PATH)

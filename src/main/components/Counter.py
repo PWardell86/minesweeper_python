@@ -1,4 +1,5 @@
-from pyglet import text, graphics, clock
+from pyglet import clock, graphics, text
+
 
 class Counter(text.Label):
     def __init__(self, x, y, batch, initial=0, font="Joystix Monospace", font_size=20, colour=(0, 200, 0, 255)):

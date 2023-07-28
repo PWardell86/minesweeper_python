@@ -1,7 +1,9 @@
-from tkinter import StringVar, ttk, Tk, mainloop
-from os import listdir
 import sys
+from os import listdir
+from tkinter import StringVar, Tk, mainloop, ttk
+
 from main.utils.Logger import Logger
+
 
 class ConfigWindow(Tk):
     def __init__(self,  save_command, theme_dir, width=250, height=300):

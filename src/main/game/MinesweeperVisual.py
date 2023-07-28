@@ -1,12 +1,15 @@
-from pyglet import window, resource, sprite, graphics
+from time import time
+
+from pyglet import graphics, resource, sprite, window
 from pyglet.window.mouse import LEFT, RIGHT
-from main.components.Counter import Timer, Counter
+
+from main.components.ConfigurationWindow import ConfigWindow
+from main.components.Counter import Counter, Timer
 from main.components.MSButton import Button
+from main.components.TileSprite import TileSprite
 from main.components.TopBar import TopBar
 from main.game.MinesweeperModelControl import MinesweeperMC
-from main.components.ConfigurationWindow import ConfigWindow
-from main.game.TileSprite import TileSprite
-from time import time
+
 
 class MinesweeperV(window.Window):
     def __init__(self, theme, difficulty, game_size, window_size, dev=False):

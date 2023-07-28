@@ -1,4 +1,5 @@
-from tkinter import ttk, Tk, mainloop, StringVar
+from tkinter import StringVar, Tk, mainloop, ttk
+
 BOTS = 3
 class SettingsWindow(Tk):
     def __init__(self, theme):

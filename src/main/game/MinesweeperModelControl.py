@@ -1,6 +1,8 @@
 from random import random
-from main.game.ControlTile import ControlTile
+
+from main.components.ControlTile import ControlTile
 from main.utils.TileUtils import TileSet
+
 
 class MinesweeperMC:
     def __init__(self, game_size, difficulty):

@@ -1,4 +1,5 @@
-from pyglet import sprite, graphics, resource
+from pyglet import graphics, resource, sprite
+
 
 class Button(sprite.Sprite):
     def __init__(self, parent, index, rest_image, press_image, theme_dir, batch, command):

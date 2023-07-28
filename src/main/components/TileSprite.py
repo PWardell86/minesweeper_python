@@ -1,4 +1,5 @@
-from pyglet import sprite, graphics
+from pyglet import graphics, sprite
+
 
 class TileSprite(sprite.Sprite):
     def __init__(self, x, y, size, defaultImage, batch):

@@ -1,9 +1,11 @@
-from pyglet import app, gl, clock
+from sys import argv, path
+
+from pyglet import app, clock, gl
+
+from main.bot.utils import BotUtils
 from main.game.MinesweeperModelControl import MinesweeperMC
 from main.game.MinesweeperVisual import MinesweeperV
-from main.bot.utils import BotUtils
 from main.utils.PropertiesUtils import PropertiesUtils
-from sys import argv, path
 
 # Remove aliasing so the quality stays the same on zoom
 gl.glTexParameteri(gl.GL_TEXTURE_2D, gl.GL_TEXTURE_MAG_FILTER, gl.GL_NEAREST)

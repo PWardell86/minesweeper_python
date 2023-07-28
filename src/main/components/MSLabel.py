@@ -1,4 +1,5 @@
-from tkinter import StringVar, ttk, Tk, mainloop
+from tkinter import StringVar, Tk, mainloop, ttk
+
 
 class Label(ttk.Label):
     def __init__(self, background_image, **kwargs):

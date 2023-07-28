@@ -1,7 +1,9 @@
-from pyglet import resource
-from sys import path as sys_path
-from os import path as os_path
 from os import listdir
+from os import path as os_path
+from sys import path as sys_path
+
+from pyglet import resource
+
 
 def add_theme_dirs_to_path():
     check_dirs = [sys_path[0]]
