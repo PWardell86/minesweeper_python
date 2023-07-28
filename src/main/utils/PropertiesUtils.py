@@ -1,5 +1,7 @@
 from jproperties import Properties
-class PropertiesUtil(Properties):
+from sys import path
+
+class PropertiesUtils(Properties):
     def __init__(self, file):
         super().__init__()
         with open(file, "rb") as config_file:

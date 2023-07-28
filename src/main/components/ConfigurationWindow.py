@@ -4,15 +4,15 @@ import sys
 from main.utils.Logger import Logger
 
 class ConfigWindow(Tk):
-    def __init__(self,  save_command, themeDir, width=250, height=300):
+    def __init__(self,  save_command, theme_dir, width=250, height=300):
         super(ConfigWindow,self) .__init__("Game Configuration", f"{width}x{height}")
         self.LOG = Logger(self)
         self.LOG.debug(sys.path)
-        self.wm_attributes("-toolwindow", True)
+        self.title("Config")
         self.save_command = save_command
         self.difficulty = 0.16
         
-        themes = listdir(themeDir)
+        themes = listdir(theme_dir)
         frm_buttons = ttk.Frame(self)
         frm_buttons.grid(column=0, row=1)
 

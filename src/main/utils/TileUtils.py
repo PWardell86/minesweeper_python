@@ -1,10 +1,9 @@
 from pyglet import resource
+from main.game.ControlTile import ControlTile
+from sys import path
 
-from src.main.game.ControlTile import ControlTile
-
-TEST_PATH = "main/utils/themes/testBlank.png"
+TEST_PATH = "test/testBlank.png"
 TEST_IMAGE = resource.image(TEST_PATH)
-
 
 class TileSet(list):
     def forAll(self, f, **kwargs):

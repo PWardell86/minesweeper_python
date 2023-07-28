@@ -1,14 +1,14 @@
 from pyglet import app, gl, clock
-from src.main.game.MinesweeperModelControl import MinesweeperMC
-from src.main.game.MinesweeperVisual import MinesweeperV
-from src.main.bot.utils import BotUtils
-from sys import argv
-from src.main.utils.PropertiesUtils import PropertiesUtil
+from main.game.MinesweeperModelControl import MinesweeperMC
+from main.game.MinesweeperVisual import MinesweeperV
+from main.bot.utils import BotUtils
+from main.utils.PropertiesUtils import PropertiesUtils
+from sys import argv, path
 
 # Remove aliasing so the quality stays the same on zoom
 gl.glTexParameteri(gl.GL_TEXTURE_2D, gl.GL_TEXTURE_MAG_FILTER, gl.GL_NEAREST)
 gl.glTexParameteri(gl.GL_TEXTURE_2D, gl.GL_TEXTURE_MIN_FILTER, gl.GL_NEAREST)
-config = PropertiesUtil("../defaults.properties")
+config = PropertiesUtils("./defaults.properties")
 
 def start_game(args_map):
     difficulty = config.getFloat("difficulty")
@@ -33,7 +33,6 @@ def get_args_map():
             args_map[keyValue[0]] = None
     return args_map
     
-print(config.getBoolean("dev"), ("--dev" in get_args_map()))
 args_map = get_args_map()
 start_game(args_map)
 app.run()

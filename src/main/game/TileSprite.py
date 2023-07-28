@@ -1,6 +1,5 @@
 from pyglet import sprite, graphics
 
-
 class TileSprite(sprite.Sprite):
     def __init__(self, x, y, size, defaultImage, batch):
         """

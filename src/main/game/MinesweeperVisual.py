@@ -1,11 +1,11 @@
 from pyglet import window, resource, sprite, graphics
 from pyglet.window.mouse import LEFT, RIGHT
-from src.main.components.Counter import Timer, Counter
-from src.main.components.MSButton import Button
-from src.main.components.TopBar import TopBar
-from src.main.game.MinesweeperModelControl import MinesweeperMC
-from src.main.components.ConfigurationWindow import ConfigWindow
-from src.main.game.TileSprite import TileSprite
+from main.components.Counter import Timer, Counter
+from main.components.MSButton import Button
+from main.components.TopBar import TopBar
+from main.game.MinesweeperModelControl import MinesweeperMC
+from main.components.ConfigurationWindow import ConfigWindow
+from main.game.TileSprite import TileSprite
 from time import time
 
 class MinesweeperV(window.Window):
@@ -27,14 +27,14 @@ class MinesweeperV(window.Window):
             self.fps_display = window.FPSDisplay(window=self)
 
         self.top_bar = TopBar(self, self.theme_dir, self.batch)
-        self.btn_settings = Button(self.top_bar, 1, "settings1.png", "settings0.png", self.theme_dir, self.batch, lambda: ConfigWindow(self.save))
+        self.btn_settings = Button(self.top_bar, 1, "settings1.png", "settings0.png", self.theme_dir, self.batch, lambda: ConfigWindow(self.save, "./themes"))
         self.btn_newGame = Button(self.top_bar, 0, "newGame1.png", "newGame0.png", self.theme_dir, self.batch, self.reset)
         self.timer = Timer(self.width / 3, self.height - (self.top_bar.getHeight() / 2), self.batch)
         self.timer.locked = True
         self.cntFlags = Counter(2 * self.width / 3, self.height - (self.top_bar.getHeight() / 2), self.batch)
 
         self.calculate_tile_size()
-        self.zoom_minmax = [0, self.tile_size]
+        self.zoom_minmax = [0.5, self.tile_size]
         self.calculate_empty_space()
 
         self.generate_blank_tiles()
@@ -109,7 +109,7 @@ class MinesweeperV(window.Window):
         self.reset()
 
     def zoom(self, x, y, amount):
-        x_index, y_index = (x - self.empty_space[0]), (y - self.empty_space[1])
+        x_index, y_index = (x - self.empty_space[0]), (y - self.empty_space[1] - self.top_bar.getHeight())
         tile = self.tiles[0][0]
         old_size = self.tile_size
         tile.scale += amount
@@ -169,6 +169,28 @@ class MinesweeperV(window.Window):
                 tile.x = x + ti * self.tile_size
                 tile.y = y + ri * self.tile_size
 
+    def check_bounds_move_tiles(self, dx_in, dy_in):
+        dx, dy = dx_in, dy_in
+        x_min, y_min = self.empty_space[0] + dx, self.empty_space[1] + dy
+        x_max = self.minesweeper_control.game_size[0] * self.tile_size + self.empty_space[0] + dx
+        y_max = self.minesweeper_control.game_size[1] * self.tile_size + self.empty_space[1] + dy
+        if x_min > 0:
+            dx -= x_min
+        elif x_max < self.width:
+            dx += self.width - x_max
+        if y_min > 0:
+            dy -= y_min
+        elif y_max < self.height - self.top_bar.getHeight():
+            dy += self.height - self.top_bar.getHeight() - y_max
+        
+        if self.grid_size[0] < self.width:
+            dx = dx_in
+        if self.grid_size[1] < self.height - self.top_bar.getHeight():
+            dy = dy_in
+        self.empty_space[0] += dx
+        self.empty_space[1] += dy
+        self.move_tiles_abs(self.empty_space[0], self.empty_space[1])
+
     def on_mouse_release(self, x, y, button, _1):
         if self.dragging:
             self.dragging = False
@@ -198,20 +220,8 @@ class MinesweeperV(window.Window):
         if (abs(dx) < move_threshold and abs(dy) < move_threshold) and (time() - self.mouse_down_time < time_threshold):
             return
         self.dragging = True
-        x_min, y_min = self.empty_space[0] + dx, self.empty_space[1] + dy
-        x_max = self.minesweeper_control.game_size[0] * self.tile_size + self.empty_space[0] + dx
-        y_max = self.minesweeper_control.game_size[1] * self.tile_size + self.empty_space[1] + dy
-        if x_min > 0:
-            dx -= x_min
-        elif x_max < self.width:
-            dx += self.width - x_max
-        if y_min > 0:
-            dy -= y_min
-        elif y_max < self.height - self.top_bar.getHeight():
-            dy += self.height - self.top_bar.getHeight() - y_max
-        self.empty_space[0] += dx
-        self.empty_space[1] += dy
-        self.move_tiles_abs(self.empty_space[0], self.empty_space[1])
+        self.check_bounds_move_tiles(dx, dy)
+        
         
     def on_mouse_scroll(self, x, y, dx, dy):
         new_scale = dy * self.tile_size / 200

@@ -1,6 +1,6 @@
-from src.main.bot.Bot import Bot
-from src.main.bot.IntermediateBot import IntermediateBot
-from src.main.utils import TileUtils
+from main.bot.Bot import Bot
+from main.bot.IntermediateBot import IntermediateBot
+from main.utils import TileUtils
 
 # TODO: Get this working
 class SuperiorBot(IntermediateBot):

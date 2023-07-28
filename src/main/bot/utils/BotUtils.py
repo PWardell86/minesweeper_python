@@ -1,7 +1,7 @@
-from src.main.bot.IntermediateBot import IntermediateBot
-from src.main.bot.SimpleBot import SimpleBot
-from src.main.bot.SuperiorBot import SuperiorBot
-from src.main.game import MinesweeperModelControl
+from main.bot.IntermediateBot import IntermediateBot
+from main.bot.SimpleBot import SimpleBot
+from main.bot.SuperiorBot import SuperiorBot
+from main.game import MinesweeperModelControl
 
 BOTS = {1: SimpleBot,
         2: IntermediateBot,

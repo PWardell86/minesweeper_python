@@ -1,2 +1,4 @@
 @echo off
-cd .\src && SET PYTHONPATH=$PYTHONPATH;..\ && python -m main.game %* && cd ../
+SET GAMEDIR=%~dp0
+SET PYTHONPATH=%GAMEDIR%src;%PYTHONPATH%
+start /d %GAMEDIR% /b python -m main.game %*

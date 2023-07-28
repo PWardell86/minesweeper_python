@@ -1,8 +1,7 @@
-import src.main.bot.SimpleBot
-from src.main.utils import TileUtils
+from main.bot.SimpleBot import SimpleBot
+from main.utils import TileUtils
 
-
-class IntermediateBot(src.main.bot.SimpleBot.SimpleBot):
+class IntermediateBot(SimpleBot):
     def __init__(self, game):
         super(IntermediateBot, self).__init__(game)
         self.theseRules = [

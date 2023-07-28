@@ -1,6 +1,5 @@
 from pyglet import sprite, graphics, resource
 
-
 class Button(sprite.Sprite):
     def __init__(self, parent, index, rest_image, press_image, theme_dir, batch, command):
         size = parent.height / 1.5
