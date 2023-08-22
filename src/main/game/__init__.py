@@ -13,7 +13,7 @@ def add_theme_dirs_to_path():
             if os_path.isdir(possible_directory):
                 check_dirs.append(possible_directory)
                 if file == "themes":
-                    resource.path.append(os_path.join(check_dir, file))
+                    resource.path.append(possible_directory)
     resource.reindex()
 resource.path.append(sys_path[0])
 add_theme_dirs_to_path()

@@ -225,7 +225,6 @@ class MinesweeperV(window.Window):
         self.dragging = True
         self.check_bounds_move_tiles(dx, dy)
         
-        
     def on_mouse_scroll(self, x, y, dx, dy):
         new_scale = dy * self.tile_size / 200
         self.zoom(x, y, new_scale)

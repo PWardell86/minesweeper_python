@@ -10,7 +10,7 @@ level = {
     "DEBUG": 2,
     "ALL": 4
 }
-default_level=PropertiesUtils("./defaults.properties").getStr("log_level")
+default_level=PropertiesUtils("./src/defaults.properties").getStr("log_level")
 
 class Logger:
     def __init__(self, calling_from, given_level=default_level, is_archive=False, path=log_path):

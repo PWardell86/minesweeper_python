@@ -72,5 +72,4 @@ class ConfigWindow(Tk):
         lbl_diff_text.set(f"Difficulty: {value[:4]}")
 
     def getAndValidateEntryInput(self, entry):
-        split_input = entry.get().split(",")
-        return [int(value.strip()) for value in split_input]
+        return [int(value.strip()) for value in entry.get().split(",")]

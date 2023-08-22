@@ -10,7 +10,7 @@ from main.utils.PropertiesUtils import PropertiesUtils
 # Remove aliasing so the quality stays the same on zoom
 gl.glTexParameteri(gl.GL_TEXTURE_2D, gl.GL_TEXTURE_MAG_FILTER, gl.GL_NEAREST)
 gl.glTexParameteri(gl.GL_TEXTURE_2D, gl.GL_TEXTURE_MIN_FILTER, gl.GL_NEAREST)
-config = PropertiesUtils("./defaults.properties")
+config = PropertiesUtils("./src/defaults.properties")
 
 def start_game(args_map):
     difficulty = config.getFloat("difficulty")
@@ -34,7 +34,8 @@ def get_args_map():
         elif (len(keyValue) == 1):
             args_map[keyValue[0]] = None
     return args_map
-    
-args_map = get_args_map()
-start_game(args_map)
-app.run()
+
+if __name__ == "__main__": 
+    args_map = get_args_map()
+    start_game(args_map)
+    app.run()
