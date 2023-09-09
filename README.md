@@ -5,19 +5,28 @@ Run Main.py to begin. Initial configuration can be changed within Main.py. Most 
 want to change can be changed within the game once it is started.
 
 ### Running the game
-You must run the game from the root of the project or else it will not work. \
-Check out the batch file in **run/** to do it for you.
-### Instructions
-
-Click anywhere in the game to start \
-You can zoom by scrolling and pan by dragging \
-Click the right-most button in the top bar to reset the game \
-Click the lef-most button in the top bar to change the settings
- - Window size must be given by two comma separated numbers
- - Game size must be in the same format (The dimension of the game in tiles)
- - Move the slider to change the difficulty. *0.16 is recommended*
- - You can select different themes as long as there are others in src/resources
-
+Just run the Minesweeper.bat file to get started.
+#### Options
+`--dev`: Enables debug logging as well as some other dev features  
+`--bot=?`: ? Is the level of bot you want to play with (1 -> 3)
 
 ### Bots
-In Main.py you can change which bot you want to play with. Levels 1-3
+TODO
+
+### Themes
+You can add your own themes to the `src/themes` folder.
+
+| Image           | File name               |
+|-----------------|-------------------------|
+| "one" tile      | *one.png*               |
+| "two" tile      | *two.png*               |
+| ...             | *...*                   |
+| "eight" tile    | *eight.png*             |
+| Unrevealed tile | *blank.png*             |
+| Bomb            | *bomb.png*              |
+| Button (rest)   | *button-rest.png*       |
+| Button (press)  | *button-press.png*      |
+| New game icon   | *new-game.png*          |
+| Game over icon  | *new-game-gameover.png* |
+| Settings icon   | *settings.png*          |
+| Top bar         | *topbar.png*            |
