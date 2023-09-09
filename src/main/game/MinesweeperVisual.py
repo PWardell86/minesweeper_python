@@ -17,6 +17,7 @@ class MinesweeperV(window.Window):
             window_size[0], window_size[1], caption="Minesweeper")
         self.minesweeper_control = MinesweeperMC(game_size, difficulty)
         self.theme_dir = theme
+        # TODO Show error window and refuse to start if no themes can be found
         self.theme_key = self.get_theme_key()
         self.batch = graphics.Batch() 
         self.tiles = []
@@ -30,8 +31,8 @@ class MinesweeperV(window.Window):
             self.fps_display = window.FPSDisplay(window=self)
         resource.add_font(f"{self.theme_dir}/7-segments.ttf")
         self.top_bar = TopBar(self, self.theme_dir, self.batch)
-        self.btn_settings = Button(self.top_bar, 1, "settings1.png", "settings0.png", self.theme_dir, self.batch, lambda: ConfigWindow(self.save, "./src/themes"))
-        self.btn_newGame = Button(self.top_bar, 0, "newGame1.png", "newGame0.png", self.theme_dir, self.batch, self.reset)
+        self.btn_settings = Button(self.top_bar, 1, "settings.png", self.theme_dir, self.batch, lambda: ConfigWindow(self.save, "./src/themes"))
+        self.btn_newGame = Button(self.top_bar, 0, "new-game.png" , self.theme_dir, self.batch, self.reset)
         self.timer = Timer(self.width / 3, self.height - (self.top_bar.getHeight() / 2), self.theme_dir, self.batch)
         self.timer.locked = True
         self.cntFlags = Counter(2 * self.width / 3, self.height - (self.top_bar.getHeight() / 2), self.theme_dir, self.batch)
@@ -137,8 +138,8 @@ class MinesweeperV(window.Window):
         self.minesweeper_control.reset()
 
         self.top_bar = TopBar(self, self.theme_dir, self.batch)
-        self.btn_settings = Button(self.top_bar, 1, "settings1.png", "settings0.png", self.theme_dir, self.batch, lambda: ConfigWindow(self.save, "./src/themes"))
-        self.btn_newGame = Button(self.top_bar, 0, "newGame1.png", "newGame0.png", self.theme_dir, self.batch, self.reset)
+        self.btn_settings = Button(self.top_bar, 1, "settings.png", self.theme_dir, self.batch, lambda: ConfigWindow(self.save, "./src/themes"))
+        self.btn_newGame = Button(self.top_bar, 0, "new-game.png" , self.theme_dir, self.batch, self.reset)
 
         self.timer.setCounter(0)
         self.cntFlags.setCounter(0)
