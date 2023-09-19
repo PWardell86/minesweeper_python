@@ -9,6 +9,9 @@ class ControlTile:
         self.near_tiles = near_tiles
         self.updated = False
 
+    def is_bomb(self):
+        return self.value == 9
+
     def set_near_tiles(self, near_tiles):
         self.near_tiles = near_tiles
 

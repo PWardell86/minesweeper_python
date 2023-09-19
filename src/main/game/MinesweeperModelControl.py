@@ -11,6 +11,9 @@ class MinesweeperMC:
         self.game_size = game_size
         self.started = False
         self.game_over = False
+        self.total_bombs = int(game_size[0] * game_size[1] * difficulty)
+        self.remaining_flags = self.total_bombs
+        self.revealed_tile_count = 0
 
         # Generate unrevealed tiles with no other values as a placeholder until the main is started
         for y in range(self.game_size[1]):
@@ -22,12 +25,19 @@ class MinesweeperMC:
 
     def click_event(self, x, y, flag):
         if self.started and not self.game_over:
+            self.check_win()
             if flag:
                 self.flag_tile(x, y)
             else:
                 self.reveal_tile(x, y)
         else:
             self.start_game(x, y)
+
+    def check_win(self):
+        total_tiles = self.game_size[0] * self.game_size[1]
+        
+        if self.remaining_flags == 0 and self.revealed_tile_count + self.total_bombs == total_tiles:
+            self.game_over = True
 
     def reset(self):
         self.tiles = TileSet()
@@ -46,9 +56,10 @@ class MinesweeperMC:
         if not (tile.flagged or tile.revealed):
             tile.revealed = True
             tile.updated = False
+            self.revealed_tile_count += 1
             if tile.value == 0:
                 return self.reveal_all_near_tiles(x, y)
-            if tile.value == 9:
+            if tile.is_bomb():
                 self.end_game()
                 return False
         elif not tile.flagged and tile.revealed:
@@ -59,6 +70,8 @@ class MinesweeperMC:
 
     def flag_tile(self, x, y):
         tile = self.tiles.getTileAtCoord(x, y)
+        self.remaining_flags += 1 if tile.flagged else -1
+
         if not tile.revealed:
             tile.flagged = not tile.flagged
             tile.updated = False
@@ -66,7 +79,7 @@ class MinesweeperMC:
     def generate_bombs(self, start_x, start_y):
         self.tiles = TileSet()
         tiles_left = self.game_size[0] * self.game_size[1]
-        bombs_left = tiles_left * self.difficulty
+        bombs_left = int(tiles_left * self.difficulty)
 
         # Generate the bombs
         for y in range(self.game_size[1]):
