@@ -1,6 +1,6 @@
 class Bot:
     def __init__(self, game):
-        self.game = game.minesweeperControl
+        self.game = game.minesweeper_control
         self.visual = game
         # A list of methods for each special case
 
@@ -12,10 +12,10 @@ class Bot:
         self.all_rules = self.these_rules
 
     def start(self):
-        self.game.startGame(self.game.gameSize[0] // 2, self.game.gameSize[1] // 2)
+        self.game.start_game(self.game.game_size[0] // 2, self.game.game_size[1] // 2)
 
     def tick(self, t):
-        if self.game.gameOver:
+        if self.game.game_over:
             return
         if self.game.started:
             self.did_something = False

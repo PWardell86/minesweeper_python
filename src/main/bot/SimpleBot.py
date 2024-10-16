@@ -13,17 +13,17 @@ class SimpleBot(Bot):
 
     def flagAllTilesRule(self, tile):
         if tile.revealed:
-            self.flagNearTilesIfPossible(tile.nearTiles, tile)
+            self.flag_near_tiles_if_possible(tile.near_tiles, tile)
 
     def revealAllTilesRule(self, tile):
         if tile.revealed:
-            self.revealNearTilesIfPossible(tile.nearTiles, tile)
+            self.reveal_near_tiles_if_possible(tile.near_tiles, tile)
 
-    def flagNearTilesIfPossible(self, nearTiles: list, tile):
+    def flag_near_tiles_if_possible(self, near_tiles: list, tile):
         unrevealedTiles = 0
         flaggedTiles = 0
         otherTiles = []
-        for t in nearTiles:
+        for t in near_tiles:
             if not t.revealed and not t.flagged:
                 otherTiles.append(t)
                 unrevealedTiles += 1
@@ -32,10 +32,10 @@ class SimpleBot(Bot):
 
         if unrevealedTiles == tile.value - flaggedTiles:
             for t in otherTiles:
-                self.game.flagTile(t.x, t.y)
+                self.game.flag_tile(t.x, t.y)
                 self.didSomething = True
 
-    def revealNearTilesIfPossible(self, tiles: list, tile):
+    def reveal_near_tiles_if_possible(self, tiles: list, tile):
         flaggedTiles = 0
         unrevealedTiles = []
         for t in tiles:
@@ -47,4 +47,4 @@ class SimpleBot(Bot):
                 # be bombs. So we reveal them
         if flaggedTiles == tile.value:
             for t in unrevealedTiles:
-                self.didSomething |= self.game.revealTile(t.x, t.y)
+                self.didSomething |= self.game.reveal_tile(t.x, t.y)
