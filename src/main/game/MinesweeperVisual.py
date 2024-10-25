@@ -3,12 +3,12 @@ from time import time
 from pyglet import font, graphics, resource, sprite, window
 from pyglet.window.mouse import LEFT, RIGHT
 
-from main.components.ConfigurationWindow import ConfigWindow
-from main.components.Counter import Counter, Timer
-from main.components.MSButton import Button
-from main.components.TileSprite import TileSprite
-from main.components.TopBar import TopBar
-from main.game.MinesweeperModelControl import MinesweeperMC
+from src.main.components.ConfigurationWindow import ConfigWindow
+from src.main.components.Counter import Counter, Timer
+from src.main.components.MSButton import Button
+from src.main.components.TileSprite import TileSprite
+from src.main.components.TopBar import TopBar
+from src.main.game.MinesweeperModelControl import MinesweeperMC
 
 
 class MinesweeperV(window.Window):

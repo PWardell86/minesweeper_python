@@ -1,5 +1,5 @@
-from main.bot.SimpleBot import SimpleBot
-from main.utils import TileUtils
+from src.main.bot.SimpleBot import SimpleBot
+from src.main.utils import TileUtils
 
 class IntermediateBot(SimpleBot):
     def __init__(self, game):

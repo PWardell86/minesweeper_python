@@ -1,7 +1,7 @@
 from random import random
 
-from main.components.ControlTile import ControlTile
-from main.utils.TileUtils import TileSet
+from src.main.components.ControlTile import ControlTile
+from src.main.utils.TileUtils import TileSet
 
 
 class MinesweeperMC:

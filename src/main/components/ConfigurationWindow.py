@@ -2,7 +2,7 @@ import sys
 from os import listdir
 from tkinter import StringVar, Tk, mainloop, ttk
 
-from main.utils.Logger import Logger
+from src.main.utils.Logger import Logger
 
 
 class ConfigWindow(Tk):

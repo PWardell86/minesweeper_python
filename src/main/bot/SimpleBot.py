@@ -1,4 +1,4 @@
-from main.bot.Bot import Bot
+from src.main.bot.Bot import Bot
 
 class SimpleBot(Bot):
     def __init__(self, game):

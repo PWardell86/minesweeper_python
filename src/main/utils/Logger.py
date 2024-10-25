@@ -1,7 +1,7 @@
 from os import mkdir
 from time import asctime, localtime, strftime
 
-from main.utils.PropertiesUtils import PropertiesUtils
+from src.main.utils.PropertiesUtils import PropertiesUtils
 
 log_path = "./log"
 level = {
